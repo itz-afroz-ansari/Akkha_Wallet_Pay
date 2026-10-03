@@ -8,4 +8,4 @@ FROM eclipse-temurin:17-jre
 WORKDIR /app
 COPY --from=build /workspace/target/DigitalWalletSystem-0.0.1-SNAPSHOT.jar /app/app.jar
 EXPOSE 8081
-ENTRYPOINT ["java", "-jar", "/app/app.jar"]
+ENTRYPOINT ["java", "-Xms16m", "-Xmx48m", "-XX:MaxMetaspaceSize=40m", "-XX:ReservedCodeCacheSize=12m", "-Xss256k", "-XX:+UseSerialGC", "-Djava.security.egd=file:/dev/./urandom", "-jar", "/app/app.jar"]
