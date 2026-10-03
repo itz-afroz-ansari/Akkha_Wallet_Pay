@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My Profile - PayWallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --ink: #0f2a1f;
+            --paper: #ffffff;
+            --rule: #e6e9e7;
+            --emerald: #0f7a4c;
+            --emerald-deep: #0b5c3a;
+            --emerald-tint: #eaf5ef;
+            --muted: #7c877f;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f8faf9;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* --- Custom Navbar & Sidebar --- */
+        .navbar-custom {
+            background: var(--paper);
+            border-bottom: 1px solid var(--rule);
+            padding: 12px 24px;
+        }
+        .brand-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--emerald-deep);
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+        
+        .nav-avatar-mini {
+            width: 40px; height: 40px;
+            background: var(--emerald-tint);
+            color: var(--emerald-deep);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1.1rem;
+            transition: transform 0.2s ease;
+        }
+        .nav-avatar-mini:hover { transform: translateY(-1px); }
+        .dropdown-toggle::after { display: none; }
+
+        .offcanvas-custom { border-right: 1px solid var(--rule); }
+        .sidebar-link {
+            color: var(--ink); font-weight: 600;
+            transition: all 0.2s ease;
+            border-radius: 12px; margin: 4px 16px;
+        }
+        .sidebar-link:hover { background: var(--emerald-tint); color: var(--emerald-deep); }
+
+        /* --- Profile Page Specifics --- */
+        .page-wrap { max-width: 640px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        .back-link {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--muted);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 32px; transition: color 0.2s ease;
+            text-transform: uppercase;
+        }
+        .back-link:hover { color: var(--emerald-deep); }
+
+        .card-profile {
+            background: var(--paper); border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
+            position: relative; overflow: hidden;
+        }
+        .card-profile::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--emerald) 0%, #4fa87f 60%, var(--emerald) 100%);
+        }
+
+        /* Profile Header Section */
+        .profile-header {
+            padding: 48px 40px 32px;
+            text-align: center;
+            border-bottom: 1px solid var(--rule);
+        }
+        .profile-avatar-large {
+            width: 96px; height: 96px;
+            background: var(--emerald-tint); color: var(--emerald-deep);
+            border-radius: 28px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 2.8rem;
+            margin-bottom: 20px;
+        }
+        .profile-name { font-family: 'Manrope', sans-serif; font-weight: 800; font-size: 1.8rem; color: var(--ink); margin-bottom: 4px; letter-spacing: -0.02em; }
+        .profile-role { font-size: 0.9rem; color: var(--muted); font-weight: 500; }
+
+        /* Profile Data Section */
+        .profile-body { padding: 12px 40px 40px; }
+        .data-row {
+            padding: 24px 0;
+            border-bottom: 1px solid var(--rule);
+            display: flex; flex-direction: column; gap: 6px;
+        }
+        .data-row:last-child { border-bottom: none; padding-bottom: 0; }
+        
+        .data-label {
+            font-size: 0.7rem; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.12em;
+        }
+        .data-value {
+            font-size: 1.15rem; font-weight: 600; color: var(--ink);
+        }
+
+        /* Custom Status Badge */
+        .badge-verified {
+            display: inline-flex; align-items: center; gap: 8px;
+            background: var(--emerald-tint); color: var(--emerald-deep);
+            padding: 8px 16px; border-radius: 999px;
+            font-size: 0.85rem; font-weight: 700; border: 1px solid #c9dfd3;
+        }
+        .badge-verified i { font-size: 1.1rem; }
+    </style>
+</head>
+<body>
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar navbar-custom sticky-top">
+        <div class="container-fluid max-w-lg d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn p-0 border-0 text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+                </button>
+                <a class="brand-logo" href="/dashboard">PayWallet</a>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                    <div class="nav-avatar-mini shadow-sm">
+                        <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PREMIUM SIDEBAR -->
+    <div class="offcanvas offcanvas-start offcanvas-custom" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--paper);">
+        <div class="offcanvas-header border-bottom px-4 py-4">
+            <h5 class="brand-logo mb-0">PayWallet Hub</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0 py-3">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link sidebar-link px-4 py-3">
+                        <i class="bi bi-house-door me-3 fs-5 align-middle"></i> Dashboard
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="page-wrap">
+        <a href="/dashboard" class="back-link">&larr; BACK TO DASHBOARD</a>
+        
+        <div class="card-profile">
+            <!-- Header section with sleek layout -->
+            <div class="profile-header">
+                <div class="profile-avatar-large">
+                    <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
+                </div>
+                <h4 class="profile-name" th:text="${user.name}">John Doe</h4>
+                <p class="profile-role">Verified PayWallet Member</p>
+            </div>
+            
+            <!-- Clean data rows -->
+            <div class="profile-body">
+                
+                <div class="data-row">
+                    <span class="data-label">Wallet ID / Phone Number</span>
+                    <span class="data-value" th:text="${user.phoneNumber}">9876543210</span>
+                </div>
+                
+                <div class="data-row">
+                    <span class="data-label">Registered Email</span>
+                    <span class="data-value" th:text="${user.email}">user@example.com</span>
+                </div>
+                
+                <div class="data-row">
+                    <span class="data-label">Account Status</span>
+                    <div>
+                        <span class="badge-verified">
+                            <i class="bi bi-shield-check"></i> Active & Protected
+                        </span>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

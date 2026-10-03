@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Send Money - PayWallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            /* Updated to match the premium Emerald & Ink theme */
+            --ink: #0f2a1f;
+            --accent: #0f7a4c;
+            --accent-deep: #0b5c3a;
+            --accent-tint: #eaf5ef;
+            --muted: #7c877f;
+            --rule: #e6e9e7;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f8faf9;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        .page-wrap {
+            max-width: 460px;
+            margin: 0 auto;
+            padding: 72px 24px 60px;
+        }
+
+        .back-link {
+            font-size: 0.72rem;
+            font-weight: 700;
+            letter-spacing: 0.12em;
+            color: var(--muted);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 36px;
+            transition: color 0.2s ease;
+            text-transform: uppercase;
+        }
+        .back-link:hover { color: var(--accent-deep); }
+
+        .card-modern {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 40px 36px 36px;
+            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
+            position: relative;
+            overflow: hidden;
+        }
+        .card-modern::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent) 0%, #4fa87f 60%, var(--accent) 100%);
+        }
+
+        .eyebrow {
+            font-size: 0.68rem;
+            font-weight: 700;
+            letter-spacing: 0.16em;
+            text-transform: uppercase;
+            color: var(--accent-deep);
+            margin-bottom: 6px;
+        }
+
+        h2.title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--ink);
+            margin-bottom: 28px;
+            letter-spacing: -0.02em;
+        }
+
+        .amount-display {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 2.6rem;
+            line-height: 1;
+            font-variant-numeric: tabular-nums;
+            color: var(--ink);
+            padding-bottom: 18px;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: baseline;
+            gap: 4px;
+            letter-spacing: -0.02em;
+            background: linear-gradient(to bottom, transparent calc(100% - 2px), var(--rule) 2px);
+            transition: background 0.25s ease;
+        }
+        .amount-display .rupee { font-size: 1.5rem; font-weight: 600; color: var(--muted); }
+        .amount-display.filled { background: linear-gradient(to bottom, transparent calc(100% - 2px), var(--accent) 2px); }
+        .amount-display .placeholder-zero { color: #d3d9d5; }
+
+        .field-group { margin-bottom: 22px; }
+
+        .field-label {
+            font-size: 0.68rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.14em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .receiver-field {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fbfcfb;
+            border: 1px solid var(--rule);
+            border-radius: 14px;
+            padding: 10px 14px;
+            transition: border-color 0.2s ease, background 0.2s ease, box-shadow 0.2s ease;
+        }
+        .receiver-field:focus-within {
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(15, 122, 76, 0.1);
+        }
+        .receiver-avatar {
+            flex: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            background: var(--accent-tint);
+            color: var(--accent-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .receiver-avatar svg { width: 16px; height: 16px; }
+        .receiver-input {
+            flex: 1;
+            border: none;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            font-weight: 500;
+            color: var(--ink);
+        }
+        .receiver-input:focus { outline: none; }
+        .receiver-input::placeholder { color: #b7c0ba; }
+
+        .amount-input {
+            width: 100%;
+            border: none;
+            border-bottom: 1px solid var(--rule);
+            padding: 8px 0;
+            font-size: 1rem;
+            background: transparent;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            transition: border-color 0.2s ease;
+        }
+        .amount-input:focus { outline: none; border-bottom-color: var(--accent); }
+        .amount-input::placeholder { color: #b7c0ba; }
+
+        .chip-row {
+            display: flex;
+            gap: 8px;
+            margin-top: 12px;
+            flex-wrap: wrap;
+        }
+        .chip {
+            border: 1px solid var(--rule);
+            background: #fbfcfb;
+            color: var(--ink);
+            font-size: 0.78rem;
+            font-weight: 600;
+            padding: 6px 13px;
+            border-radius: 999px;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+        .chip:hover { border-color: var(--accent); color: var(--accent-deep); }
+        .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; }
+
+        /* Custom PIN Input Styling */
+        .pin-input {
+            width: 100%;
+            background: #fbfcfb;
+            border: 2px solid var(--rule);
+            border-radius: 14px;
+            padding: 12px;
+            font-size: 1.8rem;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            color: var(--ink);
+            text-align: center;
+            letter-spacing: 0.4em;
+            padding-left: calc(12px + 0.4em);
+            transition: all 0.2s ease;
+        }
+        .pin-input:focus {
+            outline: none;
+            background: #fff;
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px rgba(15, 122, 76, 0.1);
+        }
+        .pin-input::placeholder {
+            color: #d3d9d5;
+            letter-spacing: normal;
+            font-size: 1.2rem;
+            font-weight: 500;
+            transform: translateY(-3px);
+            display: inline-block;
+        }
+
+        .btn-confirm {
+            width: 100%;
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            margin-top: 24px;
+            transition: background 0.25s ease, transform 0.15s ease;
+        }
+        .btn-confirm:hover { background: var(--accent-deep); transform: translateY(-1px); }
+        .btn-confirm:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <a href="/dashboard" class="back-link">&larr; BACK TO DASHBOARD</a>
+
+        <div class="card-modern">
+            <div class="eyebrow">Wallet &middot; Transfer</div>
+            <h2 class="title">Send money</h2>
+
+            <form th:action="@{/dashboard/transfer}" method="POST" id="sendMoneyForm">
+                <input type="hidden" name="operationKey" th:value="${operationKey}">
+
+                <div class="amount-display" id="amountDisplay">
+                    <span class="rupee">₹</span><span id="amountText" class="placeholder-zero">0.00</span>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Receiver phone</label>
+                    <div class="receiver-field">
+                        <span class="receiver-avatar">
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"/>
+                            </svg>
+                        </span>
+                        <input type="tel" class="receiver-input" name="receiverPhone" th:value="${receiverPhone}" placeholder="98765 43210" inputmode="tel" autocomplete="tel" maxlength="20" required>
+                    </div>
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Amount in INR</label>
+                    <input type="number" class="amount-input" id="amountInput" name="amount" placeholder="Enter amount" min="0.01" max="1000000" step="0.01" required>
+                    <div class="chip-row">
+                        <button type="button" class="chip" data-amount="100">₹100</button>
+                        <button type="button" class="chip" data-amount="500">₹500</button>
+                        <button type="button" class="chip" data-amount="1000">₹1,000</button>
+                        <button type="button" class="chip" data-amount="2000">₹2,000</button>
+                    </div>
+                </div>
+
+                <!-- NEW SECURITY PIN FIELD -->
+                <div class="field-group" style="margin-top: 32px; text-align: center;">
+                    <label class="field-label">4-Digit Security PIN</label>
+                    <input type="password" class="pin-input" name="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="off" aria-label="4-digit wallet MPIN">
+                </div>
+
+                <button type="submit" class="btn-confirm">Confirm transfer</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            var input = document.getElementById('amountInput');
+            var text = document.getElementById('amountText');
+            var display = document.getElementById('amountDisplay');
+            var chips = document.querySelectorAll('.chip');
+
+            function formatAmount(value) {
+                if (!value) return null;
+                var num = parseFloat(value);
+                if (isNaN(num)) return null;
+                return num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+            }
+
+            function refresh() {
+                var formatted = formatAmount(input.value);
+                if (formatted) {
+                    text.textContent = formatted;
+                    text.classList.remove('placeholder-zero');
+                    display.classList.add('filled');
+                } else {
+                    text.textContent = '0.00';
+                    text.classList.add('placeholder-zero');
+                    display.classList.remove('filled');
+                }
+                chips.forEach(function (c) {
+                    c.classList.toggle('active', c.dataset.amount === input.value);
+                });
+            }
+
+            if (input) {
+                input.addEventListener('input', refresh);
+                chips.forEach(function (chip) {
+                    chip.addEventListener('click', function () {
+                        input.value = chip.dataset.amount;
+                        refresh();
+                        input.focus();
+                    });
+                });
+            }
+        })();
+    </script>
+</body>
+</html>

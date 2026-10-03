@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Receive money - Akhha Pay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root{--ink:#10271e;--green:#0f7a4c;--pale:#eaf5ef;--muted:#78857d;--line:#e5ebe7}*{box-sizing:border-box}body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(480px,100%);background:white;border:1px solid var(--line);border-radius:24px;padding:30px;text-align:center;box-shadow:0 18px 50px rgba(22,57,39,.08)}.back{display:block;text-align:left;color:var(--muted);text-decoration:none;font-size:.74rem;font-weight:800;letter-spacing:.1em}.mark{width:54px;height:54px;margin:24px auto 12px;display:grid;place-items:center;background:var(--pale);color:var(--green);border-radius:17px;font-size:1.4rem}.card h1{font:800 1.5rem Manrope,sans-serif}.card p{font-size:.84rem;color:var(--muted);line-height:1.55}.qr-shell{display:inline-grid;place-items:center;margin:10px auto 15px;padding:17px;border:1px solid var(--line);border-radius:20px;background:#fff;min-width:244px;min-height:244px}.wallet-number{font:800 1rem Manrope,sans-serif;letter-spacing:.06em}.label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:800}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:21px}.actions a,.actions button{border-radius:11px;padding:12px;text-decoration:none;font-weight:800;font-size:.8rem}.primary{background:var(--green);border:0;color:#fff}.secondary{background:white;border:1px solid var(--line);color:var(--ink)}.demo{font-size:.7rem!important;margin-top:16px!important}
+    </style>
+</head>
+<body><main class="card" th:data-wallet="${wallet.walletNumber}" id="qrCard">
+    <a th:href="@{/dashboard}" class="back">&larr; DASHBOARD</a><div class="mark"><i class="bi bi-qr-code"></i></div>
+    <h1>Receive with your QR</h1><p>Let another PayWallet user scan this code. They’ll confirm the amount and approve with their MPIN.</p>
+    <div class="qr-shell"><div id="walletQr" aria-label="Your wallet payment QR code"></div></div>
+    <div class="label">Your wallet ID</div><div class="wallet-number" th:text="${wallet.walletNumber}">WLT0000000000000</div>
+    <div class="actions"><a class="primary" th:href="@{/dashboard/scan}"><i class="bi bi-camera me-1"></i> Scan to pay</a><button class="secondary" type="button" onclick="window.print()"><i class="bi bi-download me-1"></i> Save / print</button></div>
+    <p class="demo">DEMO MODE · This QR works within this PayWallet demo app. It does not create a UPI payment.</p>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
+<script>
+  (function () {
+    var card = document.getElementById('qrCard');
+    var wallet = card && card.dataset.wallet;
+    var target = document.getElementById('walletQr');
+    if (!wallet || !target || !window.QRCode) { if (target) target.textContent = 'QR generator unavailable'; return; }
+    var payload = window.location.origin + '/dashboard/pay?wallet=' + encodeURIComponent(wallet);
+    new QRCode(target, { text: payload, width: 210, height: 210, colorDark: '#10271e', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+  })();
+</script></body></html>

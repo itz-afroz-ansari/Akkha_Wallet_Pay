@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Savings goals - Akhha Pay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root{--ink:#10271e;--green:#0f7a4c;--pale:#eaf5ef;--muted:#78857d;--line:#e5ebe7}*{box-sizing:border-box}
+        body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh}.wrap{width:min(1080px,calc(100% - 32px));margin:auto;padding:30px 0 60px}
+        .top{display:flex;justify-content:space-between;margin-bottom:25px}.top a{color:var(--muted);font-size:.75rem;font-weight:800;letter-spacing:.1em;text-decoration:none}.brand{color:var(--green)!important;font:800 1rem Manrope,sans-serif!important;letter-spacing:0!important}
+        .hero{padding:27px 30px;border-radius:22px;color:#fff;background:linear-gradient(120deg,#10271e,#14553a 66%,#0f7a4c);margin-bottom:20px}.hero small{color:#a9e3c3;font-size:.68rem;letter-spacing:.16em;text-transform:uppercase;font-weight:800}.hero h1{font:800 clamp(1.6rem,4vw,2.2rem) Manrope,sans-serif;margin:8px 0}.hero p{margin:0;color:#d5e5dc}
+        .grid{display:grid;grid-template-columns:minmax(260px,.72fr) minmax(0,1.4fr);gap:20px;align-items:start}.card{border:1px solid var(--line);background:white;border-radius:20px;padding:23px;box-shadow:0 8px 25px rgba(20,52,36,.04)}h2{font:800 1.05rem Manrope,sans-serif;margin:0}.sub{font-size:.82rem;color:var(--muted);line-height:1.5;margin:8px 0 19px}
+        .form-label{font-size:.68rem;text-transform:uppercase;letter-spacing:.1em;color:#65746b;font-weight:800}.form-control{min-height:44px;border-radius:10px;border-color:var(--line)}.form-control:focus{border-color:var(--green);box-shadow:0 0 0 3px #0f7a4c1a}.btn-green{background:var(--green);color:#fff;border:0;border-radius:10px;padding:12px;font-weight:800}.btn-green:hover{background:#0b5c3a;color:#fff}
+        .goal-list{display:grid;gap:13px}.goal{padding:18px;border:1px solid var(--line);border-radius:16px}.goal-head{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}.goal-name{font:800 .95rem Manrope,sans-serif}.goal-target{font-size:.73rem;color:var(--muted);margin-top:3px}.goal-balance{text-align:right;font:800 1.04rem Manrope,sans-serif}.goal-balance small{display:block;color:var(--muted);font:500 .7rem Inter,sans-serif;margin-top:3px}.progress{height:8px;background:#edf2ef;border-radius:99px;margin:14px 0 7px}.progress-bar{background:linear-gradient(90deg,#0f7a4c,#42a875);border-radius:99px}.progress-label{font-size:.7rem;color:var(--muted)}
+        .goal-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px}.goal-actions form{border:1px solid var(--line);border-radius:12px;padding:10px}.goal-actions label{font-size:.64rem;color:var(--muted);font-weight:800;text-transform:uppercase}.goal-actions .form-control{min-height:38px;margin:5px 0}.goal-actions .pin{letter-spacing:.2em;text-align:center}.goal-actions .btn{width:100%;font-size:.76rem;font-weight:800;border-radius:9px}.btn-light-green{background:var(--pale);color:#0b6841;border:0}.empty{padding:27px;text-align:center;border:1px dashed var(--line);border-radius:15px;color:var(--muted);font-size:.83rem}
+        .hint-box{background:#f4f9f6;border:1px solid #e0eee5;color:#526359;padding:13px;border-radius:12px;font-size:.75rem;line-height:1.5;margin-top:16px}
+        @media(max-width:780px){.grid{grid-template-columns:1fr}}@media(max-width:500px){.wrap{width:calc(100% - 22px);padding-top:18px}.hero{padding:22px}.card{padding:17px}.goal-actions{grid-template-columns:1fr}}
+    </style>
+</head>
+<body><main class="wrap">
+    <div class="top"><a th:href="@{/dashboard}">&larr; DASHBOARD</a><a class="brand" th:href="@{/dashboard}">Akhha Pay</a></div>
+    <header class="hero"><small>Small steps add up</small><h1>Savings goals</h1><p>Set a target and move money into a separate goal balance whenever you’re ready.</p></header>
+    <div th:if="${txSuccess}" class="alert alert-success border-0 shadow-sm" th:text="${txSuccess}"></div>
+    <div th:if="${txError}" class="alert alert-danger border-0 shadow-sm" th:text="${txError}"></div>
+    <div class="grid">
+        <section class="card"><h2>Create a goal</h2><p class="sub">Give your goal a name and target amount. You can contribute or withdraw later.</p>
+            <form th:action="@{/dashboard/savings}" method="post">
+                <div class="mb-3"><label class="form-label" for="goalName">Goal name</label><input id="goalName" class="form-control" name="name" maxlength="60" placeholder="Emergency fund, laptop…" required></div>
+                <div class="mb-3"><label class="form-label" for="goalTarget">Target amount</label><div class="input-group"><span class="input-group-text bg-white border-end-0">₹</span><input id="goalTarget" class="form-control border-start-0" name="targetAmount" type="number" min="0.01" max="100000000" step="0.01" placeholder="0.00" required></div></div>
+                <button class="btn-green w-100" type="submit">Create savings goal</button>
+            </form>
+            <div class="hint-box"><i class="bi bi-shield-lock me-1"></i> Contributions require your MPIN and are recorded in the wallet ledger. Savings are simulated in this demo.</div>
+        </section>
+        <section class="card"><h2>Your goals</h2><p class="sub">Balances here are tracked separately from your available wallet balance.</p>
+            <div th:if="${goals.isEmpty()}" class="empty">No savings goals yet. Create one to start setting money aside.</div>
+            <div th:unless="${goals.isEmpty()}" class="goal-list">
+                <article class="goal" th:each="goal : ${goals}">
+                    <div class="goal-head"><div><div class="goal-name" th:text="${goal.name}">Goal</div><div class="goal-target" th:text="${#strings.toLowerCase(goal.status)} + ' · target ₹' + ${#numbers.formatDecimal(goal.targetAmount,1,2)}">active · target</div></div><div class="goal-balance" th:text="'₹' + ${#numbers.formatDecimal(goal.savedAmount,1,2)}">₹0.00<small>saved so far</small></div></div>
+                    <div class="progress"><div class="progress-bar" role="progressbar" th:style="'width:' + ${progress[goal.id]} + '%'"></div></div>
+                    <div class="progress-label" th:text="${progress[goal.id]} + '% of your target'">0% of your target</div>
+                    <div class="goal-actions" th:if="${goal.status == 'ACTIVE'}">
+                        <form th:action="@{/dashboard/savings/{id}/contribute(id=${goal.id})}" method="post">
+                            <input type="hidden" name="operationKey" th:value="${contributeKeys[goal.id]}">
+                            <label>Move in</label><input class="form-control" type="number" name="amount" min="0.01" step="0.01" placeholder="₹ amount" required>
+                            <input class="form-control pin" type="password" name="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="4-digit MPIN" required autocomplete="off">
+                            <button class="btn btn-light-green" type="submit">Add to goal</button>
+                        </form>
+                        <form th:action="@{/dashboard/savings/{id}/withdraw(id=${goal.id})}" method="post">
+                            <input type="hidden" name="operationKey" th:value="${withdrawKeys[goal.id]}">
+                            <label>Move back</label><input class="form-control" type="number" name="amount" min="0.01" step="0.01" th:attr="max=${goal.savedAmount}" placeholder="₹ amount" required>
+                            <input class="form-control pin" type="password" name="pin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="4-digit MPIN" required autocomplete="off">
+                            <button class="btn btn-outline-secondary" type="submit">Withdraw to wallet</button>
+                        </form>
+                    </div>
+                    <form th:if="${goal.status == 'ACTIVE' and goal.savedAmount.signum() == 0}" th:action="@{/dashboard/savings/{id}/close(id=${goal.id})}" method="post" class="text-end mt-2"><button class="btn btn-link btn-sm text-muted text-decoration-none" type="submit">Close empty goal</button></form>
+                </article>
+            </div>
+        </section>
+    </div>
+</main></body></html>

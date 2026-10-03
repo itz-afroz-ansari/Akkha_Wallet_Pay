@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PayWallet Sign Up Portal</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --ink: #0f2a1f;
+            --paper: #ffffff;
+            --rule: #e6e9e7;
+            --emerald: #0f7a4c;
+            --emerald-deep: #0b5c3a;
+            --emerald-tint: #eaf5ef;
+            --muted: #7c877f;
+            --danger: #d93025;
+            --danger-tint: #fce8e6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f8faf9;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 0; /* Extra padding so the taller form doesn't hit the edges on small screens */
+        }
+
+        .auth-wrapper {
+            width: 100%;
+            max-width: 440px; /* Slightly wider for the registration form */
+            padding: 24px;
+        }
+
+        .card-auth {
+            background: var(--paper);
+            border-radius: 24px;
+            padding: 48px 40px;
+            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-auth::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0;
+            height: 5px;
+            background: linear-gradient(90deg, var(--emerald) 0%, #4fa87f 60%, var(--emerald) 100%);
+        }
+
+        .brand-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.2rem;
+            color: var(--emerald);
+            text-align: center;
+            margin-bottom: 24px;
+            letter-spacing: -0.02em;
+        }
+
+        h2.title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.8rem;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 8px;
+            letter-spacing: -0.03em;
+        }
+
+        .subtitle {
+            text-align: center;
+            font-size: 0.9rem;
+            color: var(--muted);
+            margin-bottom: 36px;
+        }
+
+        .alert-custom {
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            text-align: center;
+            margin-bottom: 24px;
+            border: none;
+        }
+        .alert-error {
+            background: var(--danger-tint);
+            color: #a51d14;
+        }
+
+        .field-group { margin-bottom: 20px; }
+
+        .field-label {
+            font-size: 0.7rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .custom-input {
+            width: 100%;
+            background: #fbfcfb;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: var(--ink);
+            transition: all 0.2s ease;
+        }
+        .custom-input:focus {
+            outline: none;
+            background: var(--paper);
+            border-color: var(--emerald);
+            box-shadow: 0 0 0 4px rgba(15, 122, 76, 0.1);
+        }
+        .custom-input::placeholder { color: #b7c0ba; }
+
+        .btn-auth {
+            width: 100%;
+            background: var(--ink);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            margin-top: 16px;
+            transition: background 0.25s ease, transform 0.15s ease;
+        }
+        .btn-auth:hover {
+            background: var(--emerald-deep);
+            transform: translateY(-1px);
+        }
+        .btn-auth:active { transform: translateY(0); }
+
+        .auth-footer {
+            text-align: center;
+            margin-top: 28px;
+            font-size: 0.9rem;
+            color: var(--muted);
+        }
+        .auth-footer a {
+            color: var(--emerald-deep);
+            font-weight: 600;
+            text-decoration: none;
+            transition: color 0.2s ease;
+        }
+        .auth-footer a:hover {
+            color: var(--ink);
+            text-decoration: underline;
+        }
+    </style>
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
+</head>
+<body>
+    <div class="auth-wrapper">
+        <aside class="auth-showcase">
+            <a class="showcase-brand" href="/"><span class="showcase-logo"><i class="bi bi-wallet2"></i></span> AKHHA PAY</a>
+            <div class="showcase-copy">
+                <span class="showcase-tag"><i class="bi bi-sparkle"></i> START WITH THE ESSENTIALS</span>
+                <h1>A wallet that keeps your money in view.</h1>
+                <p>Create your account to get a simple balance view, easy transfers, and an activity history that makes sense.</p>
+                <ul class="showcase-points">
+                    <li><i class="bi bi-person-check"></i> Your own secure account</li>
+                    <li><i class="bi bi-envelope-check"></i> Security codes sent to your email</li>
+                    <li><i class="bi bi-key"></i> Set up a private transfer MPIN</li>
+                </ul>
+            </div>
+            <div class="showcase-footnote">Akhha Pay · Simple by design</div>
+        </aside>
+        <div class="card-auth">
+            
+            <h2 class="title">Create Profile</h2>
+            <p class="subtitle">A few details and your wallet is ready to set up.</p>
+            
+            <!-- Dynamic Alert -->
+            <div th:if="${error}" class="alert-custom alert-error" th:text="${error}"></div>
+            
+            <form th:action="@{/register}" method="post">
+                <div class="field-group">
+                    <label class="field-label">Full Name</label>
+                    <input type="text" name="name" class="custom-input" required placeholder="John Doe">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Email Address</label>
+                    <input type="email" name="email" class="custom-input" required placeholder="name@domain.com">
+                </div>
+
+                <div class="field-group">
+                    <label class="field-label">Mobile Number</label>
+                    <input type="text" name="phoneNumber" class="custom-input" required placeholder="9876543210">
+                </div>
+                
+                <div class="field-group">
+                    <label class="field-label">Security Password</label>
+                    <input type="password" name="password" class="custom-input" required placeholder="••••••••">
+                </div>
+                
+                <button type="submit" class="btn-auth">Register Account</button>
+            </form>
+
+            <div class="auth-footer">
+                Already have an account? <a href="/">Sign In</a>
+            </div>
+            
+        </div>
+    </div>
+</body>
+</html>

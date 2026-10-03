@@ -1,0 +1,121 @@
+body:has(.auth-wrapper) {
+    padding: 26px;
+    background: #f2f7f4;
+    background-image: radial-gradient(circle at 15% 5%, rgba(25, 130, 80, .11), transparent 28rem),
+                      radial-gradient(circle at 95% 95%, rgba(52, 120, 92, .08), transparent 24rem);
+}
+
+.auth-wrapper {
+    max-width: 980px;
+    display: grid;
+    grid-template-columns: .94fr 1.06fr;
+    align-items: stretch;
+    padding: 0;
+    border: 1px solid rgba(18, 58, 39, .08);
+    border-radius: 30px;
+    overflow: hidden;
+    background: #fff;
+    box-shadow: 0 32px 90px -42px rgba(16, 48, 33, .3);
+}
+
+.auth-showcase {
+    min-height: 590px;
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    position: relative;
+    overflow: hidden;
+    color: #fff;
+    background: linear-gradient(145deg, #10271e 0%, #12432f 60%, #0e6841 100%);
+}
+
+.auth-showcase::before,
+.auth-showcase::after {
+    content: "";
+    position: absolute;
+    border: 1px solid rgba(255,255,255,.13);
+    border-radius: 50%;
+    pointer-events: none;
+}
+
+.auth-showcase::before {
+    width: 360px; height: 360px; right: -190px; top: 90px;
+    box-shadow: 0 0 0 28px rgba(255,255,255,.035), 0 0 0 58px rgba(255,255,255,.025);
+}
+
+.auth-showcase::after {
+    width: 210px; height: 210px; left: -135px; bottom: -125px;
+    box-shadow: 0 0 0 26px rgba(255,255,255,.025);
+}
+
+.showcase-brand,
+.showcase-copy,
+.showcase-footnote { position: relative; z-index: 1; }
+
+.showcase-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 11px;
+    color: #fff;
+    text-decoration: none;
+    font: 800 .92rem 'Manrope', sans-serif;
+    letter-spacing: .08em;
+}
+
+.showcase-logo {
+    width: 40px; height: 40px; display: grid; place-items: center;
+    border-radius: 13px; color: #174d34; background: #c9f0d8; font-size: 1.2rem;
+}
+
+.showcase-tag {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 11px; border: 1px solid rgba(255,255,255,.18);
+    border-radius: 999px; color: #c4efd3; background: rgba(255,255,255,.07);
+    font-size: .64rem; font-weight: 800; letter-spacing: .14em;
+}
+
+.showcase-copy h1 {
+    max-width: 380px; margin: 20px 0 14px;
+    color: #fff; font: 800 clamp(2rem,4vw,3rem)/1.06 'Manrope',sans-serif;
+    letter-spacing: -.055em;
+}
+
+.showcase-copy > p { max-width: 355px; color: rgba(255,255,255,.73); font-size: .94rem; line-height: 1.7; }
+
+.showcase-points { list-style: none; padding: 5px 0 0; margin: 23px 0 0; display: grid; gap: 13px; }
+.showcase-points li { display: flex; align-items: center; gap: 11px; color: rgba(255,255,255,.9); font-size: .83rem; }
+.showcase-points i { display: grid; place-items: center; width: 25px; height: 25px; border-radius: 9px; color: #c8f4d7; background: rgba(255,255,255,.12); }
+.showcase-footnote { color: rgba(255,255,255,.55); font-size: .74rem; }
+
+.auth-wrapper .card-auth {
+    align-self: center;
+    padding: 54px clamp(30px,6vw,68px);
+    border-radius: 0;
+    box-shadow: none;
+    overflow: visible;
+}
+.auth-wrapper .card-auth::before { display: none; }
+.auth-wrapper h2.title { text-align: left; font-size: 2rem; margin: 0 0 8px; }
+.auth-wrapper .subtitle { text-align: left; margin-bottom: 28px; line-height: 1.55; }
+.auth-wrapper .field-label { color: #627267; }
+.auth-wrapper .custom-input { background: #f7faf8; border-color: #e2eae5; }
+.auth-wrapper .custom-input:focus { background: #fff; }
+.auth-wrapper .btn-auth {
+    margin-top: 7px;
+    background: linear-gradient(110deg, #123b29, #0f7549);
+    box-shadow: 0 12px 22px rgba(15, 90, 56, .15);
+}
+.auth-wrapper .btn-auth:hover { background: linear-gradient(110deg, #0d3021, #0b603b); }
+.auth-wrapper .auth-footer { text-align: left; margin-top: 24px; font-size: .84rem; }
+
+@media (max-width: 720px) {
+    body:has(.auth-wrapper) { padding: 14px; }
+    .auth-wrapper { max-width: 500px; grid-template-columns: 1fr; border-radius: 24px; }
+    .auth-showcase { min-height: auto; padding: 24px 25px; gap: 22px; }
+    .showcase-copy h1 { font-size: 1.75rem; margin: 13px 0 8px; }
+    .showcase-copy > p { margin-bottom: 0; font-size: .82rem; }
+    .showcase-points, .showcase-footnote { display: none; }
+    .showcase-logo { width: 34px; height: 34px; }
+    .auth-wrapper .card-auth { padding: 32px 25px 34px; }
+}

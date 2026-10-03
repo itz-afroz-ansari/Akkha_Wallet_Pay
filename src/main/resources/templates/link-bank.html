@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Link Bank</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --accent: #06b6d4;
+            --accent-deep: #0891b2;
+            --accent-tint: #e5fafd;
+            --ink: #0f172a;
+            --muted: #7c8794;
+            --rule: #e7ebee;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #ffffff;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .card-container { width: 100%; max-width: 480px; }
+
+        .back-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            color: var(--muted);
+            text-decoration: none;
+            font-size: 0.78rem;
+            font-weight: 700;
+            letter-spacing: 0.08em;
+            margin-bottom: 20px;
+            transition: color 0.2s;
+        }
+        .back-link:hover { color: var(--accent-deep); }
+        .back-link svg { width: 18px; height: 18px; }
+
+        .card-modern {
+            background: #fff;
+            border-radius: 24px;
+            padding: 44px 40px;
+            box-shadow: 0 1px 2px rgba(15,23,42,0.04), 0 24px 56px -20px rgba(15,23,42,0.14);
+        }
+
+        .card-header-section { text-align: center; margin-bottom: 32px; }
+
+        .icon-wrapper {
+            width: 64px;
+            height: 64px;
+            background: var(--accent-tint);
+            border-radius: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 18px;
+        }
+        .icon-wrapper svg { width: 30px; height: 30px; color: var(--accent-deep); }
+
+        .card-title {
+            font-family: 'Manrope', sans-serif;
+            font-size: 1.55rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            color: var(--ink);
+            margin-bottom: 6px;
+        }
+        .card-subtitle { color: var(--muted); font-size: 0.9rem; }
+
+        .form-group { margin-bottom: 20px; }
+
+        .form-label {
+            display: block;
+            font-size: 0.72rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            margin-bottom: 9px;
+        }
+
+        .form-control-modern {
+            width: 100%;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            font-family: inherit;
+            color: var(--ink);
+            background: #fbfcfd;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+        .form-control-modern:focus {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--accent-tint);
+        }
+        .form-control-modern::placeholder { color: #b6bec6; }
+
+        /* Bank picker — real <select> stays for the form (name="bankName"),
+           hidden visually; a rich custom control drives it. */
+        .bank-picker { position: relative; }
+        .bank-picker select.native-select {
+            position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+            overflow: hidden; clip: rect(0,0,0,0); border: 0;
+        }
+
+        .bank-trigger {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            background: #fbfcfd;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 12px 14px;
+            cursor: pointer;
+            text-align: left;
+            transition: border-color 0.2s ease, background 0.2s ease;
+        }
+        .bank-trigger:hover { border-color: #cdd6dc; }
+        .bank-trigger.open, .bank-trigger:focus-visible {
+            outline: none;
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px var(--accent-tint);
+        }
+        .bank-trigger.placeholder .bank-trigger-name { color: #b6bec6; font-weight: 500; }
+
+        .bank-avatar {
+            flex: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 9px;
+            background: var(--accent-tint);
+            color: var(--accent-deep);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 0.78rem;
+        }
+
+        .bank-trigger-text { flex: 1; min-width: 0; }
+        .bank-trigger-name {
+            font-size: 0.92rem;
+            font-weight: 600;
+            color: var(--ink);
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .bank-chevron {
+            flex: none;
+            width: 8px; height: 8px;
+            border-right: 1.5px solid var(--muted);
+            border-bottom: 1.5px solid var(--muted);
+            transform: rotate(45deg);
+            transition: transform 0.2s ease;
+            margin-right: 4px;
+        }
+        .bank-trigger.open .bank-chevron { transform: rotate(-135deg); }
+
+        .bank-menu {
+            position: absolute;
+            top: calc(100% + 8px);
+            left: 0; right: 0;
+            background: #fff;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            box-shadow: 0 12px 32px -12px rgba(15,23,42,0.2);
+            padding: 6px;
+            z-index: 20;
+            display: none;
+        }
+        .bank-menu.open { display: block; }
+
+        .bank-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 10px;
+            border-radius: 9px;
+            cursor: pointer;
+            transition: background 0.15s ease;
+        }
+        .bank-option:hover, .bank-option.highlighted { background: var(--accent-tint); }
+        .bank-option.selected .bank-trigger-name { color: var(--accent-deep); }
+        .bank-option.selected::after {
+            content: "";
+            width: 6px; height: 10px;
+            border-right: 1.5px solid var(--accent-deep);
+            border-bottom: 1.5px solid var(--accent-deep);
+            transform: rotate(45deg);
+            margin-left: auto;
+            margin-right: 4px;
+        }
+
+        .btn-submit {
+            width: 100%;
+            padding: 16px 24px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            font-family: 'Manrope', sans-serif;
+            color: #fff;
+            background: var(--ink);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.25s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 28px;
+        }
+        .btn-submit:hover { background: var(--accent-deep); transform: translateY(-2px); }
+        .btn-submit:active { transform: translateY(0); }
+        .btn-submit svg { width: 20px; height: 20px; }
+
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin-top: 22px;
+            padding-top: 22px;
+            border-top: 1px solid var(--rule);
+            color: var(--muted);
+            font-size: 0.78rem;
+        }
+        .security-note svg { width: 15px; height: 15px; color: #22c55e; }
+
+        @media (max-width: 520px) {
+            .card-modern { padding: 32px 22px; border-radius: 20px; }
+            .card-title { font-size: 1.35rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="card-container">
+        <a href="/dashboard" class="back-link">
+            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+            </svg>
+            BACK TO DASHBOARD
+        </a>
+
+        <div class="card-modern">
+            <div class="card-header-section">
+                <div class="icon-wrapper">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M8 14v3m4-3v3m4-3v3M3 21h18M3 10h18M3 7l9-4 9 4M4 10h16v11H4V10z"/>
+                    </svg>
+                </div>
+                <h1 class="card-title">Link bank account</h1>
+                <p class="card-subtitle">Securely connect your bank for seamless transactions</p>
+            </div>
+
+            <form th:action="@{/dashboard/link-bank}" method="POST" id="linkBankForm">
+                <div class="form-group">
+                    <label class="form-label">Bank name</label>
+                    <div class="bank-picker" id="bankPicker">
+                        <select class="native-select" id="bankNativeSelect" name="bankName" required>
+                            <option value="" disabled selected>Select your bank</option>
+                            <option value="SBI">State Bank of India (SBI)</option>
+                            <option value="HDFC">HDFC Bank</option>
+                            <option value="ICICI">ICICI Bank</option>
+                        </select>
+
+                        <button type="button" class="bank-trigger placeholder" id="bankTrigger" aria-haspopup="listbox" aria-expanded="false">
+                            <span class="bank-avatar" id="bankAvatar">—</span>
+                            <span class="bank-trigger-text">
+                                <span class="bank-trigger-name" id="bankTriggerName">Select your bank</span>
+                            </span>
+                            <span class="bank-chevron"></span>
+                        </button>
+
+                        <div class="bank-menu" id="bankMenu" role="listbox"></div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Account number</label>
+                    <input type="password" class="form-control-modern" name="accountNumber" placeholder="Enter your account number" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">IFSC code</label>
+                    <input type="text" class="form-control-modern" name="ifscCode" placeholder="e.g., SBIN0001234" required style="text-transform: uppercase;">
+                </div>
+
+                <button type="submit" class="btn-submit">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
+                    </svg>
+                    Verify &amp; link account
+                </button>
+
+                <div class="security-note">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/>
+                    </svg>
+                    256-bit SSL encrypted &bull; Bank-level security
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Drives the custom bank picker off the real (hidden) <select>,
+        // which is still what gets submitted as bankName.
+        (function () {
+            var nativeSelect = document.getElementById('bankNativeSelect');
+            var picker = document.getElementById('bankPicker');
+            var trigger = document.getElementById('bankTrigger');
+            var menu = document.getElementById('bankMenu');
+            var avatarEl = document.getElementById('bankAvatar');
+            var nameEl = document.getElementById('bankTriggerName');
+
+            if (!nativeSelect || !trigger) return;
+
+            function initials(name) {
+                var parts = name.trim().split(/\s+/).filter(Boolean);
+                if (parts.length === 0) return '—';
+                if (parts.length === 1) return parts[0].slice(0, 2).toUpperCase();
+                return (parts[0][0] + parts[1][0]).toUpperCase();
+            }
+
+            var options = Array.prototype.map.call(nativeSelect.options, function (opt) {
+                return { value: opt.value, name: (opt.textContent || '').trim(), disabled: opt.disabled };
+            }).filter(function (o) { return !o.disabled; });
+
+            function renderMenu() {
+                menu.innerHTML = '';
+                options.forEach(function (o) {
+                    var row = document.createElement('div');
+                    row.className = 'bank-option' + (o.value === nativeSelect.value ? ' selected' : '');
+                    row.setAttribute('role', 'option');
+                    row.innerHTML =
+                        '<span class="bank-avatar">' + initials(o.name) + '</span>' +
+                        '<span class="bank-trigger-text"><span class="bank-trigger-name">' + o.name + '</span></span>';
+                    row.addEventListener('click', function () {
+                        nativeSelect.value = o.value;
+                        nativeSelect.dispatchEvent(new Event('change'));
+                        updateTrigger();
+                        closeMenu();
+                    });
+                    menu.appendChild(row);
+                });
+            }
+
+            function updateTrigger() {
+                var current = options.find(function (o) { return o.value === nativeSelect.value; });
+                if (current) {
+                    avatarEl.textContent = initials(current.name);
+                    nameEl.textContent = current.name;
+                    trigger.classList.remove('placeholder');
+                } else {
+                    avatarEl.textContent = '—';
+                    nameEl.textContent = 'Select your bank';
+                    trigger.classList.add('placeholder');
+                }
+            }
+
+            function openMenu() {
+                renderMenu();
+                menu.classList.add('open');
+                trigger.classList.add('open');
+                trigger.setAttribute('aria-expanded', 'true');
+            }
+            function closeMenu() {
+                menu.classList.remove('open');
+                trigger.classList.remove('open');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+            function toggleMenu() {
+                if (menu.classList.contains('open')) closeMenu(); else openMenu();
+            }
+
+            trigger.addEventListener('click', toggleMenu);
+            document.addEventListener('click', function (e) {
+                if (!picker.contains(e.target)) closeMenu();
+            });
+            document.addEventListener('keydown', function (e) {
+                if (e.key === 'Escape') closeMenu();
+            });
+
+            updateTrigger();
+        })();
+    </script>
+</body>
+</html>

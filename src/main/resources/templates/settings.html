@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Settings - PayWallet</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --ink: #0f2a1f;
+            --paper: #ffffff;
+            --rule: #e6e9e7;
+            --emerald: #0f7a4c;
+            --emerald-deep: #0b5c3a;
+            --emerald-tint: #eaf5ef;
+            --muted: #7c877f;
+            --danger: #d93025;
+            --danger-deep: #b3261d;
+            --danger-tint: #fce8e6;
+        }
+
+        * { box-sizing: border-box; }
+
+        body {
+            background: #f8faf9;
+            font-family: 'Inter', sans-serif;
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* --- Custom Navbar & Sidebar --- */
+        .navbar-custom {
+            background: var(--paper);
+            border-bottom: 1px solid var(--rule);
+            padding: 12px 24px;
+        }
+        .brand-logo {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.4rem;
+            color: var(--emerald-deep);
+            letter-spacing: -0.02em;
+            text-decoration: none;
+        }
+        
+        .nav-avatar-mini {
+            width: 40px; height: 40px;
+            background: var(--emerald-tint);
+            color: var(--emerald-deep);
+            border-radius: 12px;
+            display: flex; align-items: center; justify-content: center;
+            font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1.1rem;
+            transition: transform 0.2s ease;
+        }
+        .nav-avatar-mini:hover { transform: translateY(-1px); }
+        .dropdown-toggle::after { display: none; }
+
+        .offcanvas-custom { border-right: 1px solid var(--rule); }
+        .sidebar-link {
+            color: var(--ink); font-weight: 600;
+            transition: all 0.2s ease;
+            border-radius: 12px; margin: 4px 16px;
+        }
+        .sidebar-link:hover { background: var(--emerald-tint); color: var(--emerald-deep); }
+
+        /* --- Settings Page Specifics --- */
+        .page-wrap { max-width: 540px; margin: 0 auto; padding: 48px 24px 80px; }
+
+        .back-link {
+            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--muted);
+            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 32px; transition: color 0.2s ease;
+            text-transform: uppercase;
+        }
+        .back-link:hover { color: var(--emerald-deep); }
+
+        .card-danger-zone {
+            background: var(--paper); border-radius: 24px;
+            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
+            position: relative; overflow: hidden;
+            padding: 48px 40px;
+        }
+        /* Red top gradient to signify danger */
+        .card-danger-zone::before {
+            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px;
+            background: linear-gradient(90deg, var(--danger) 0%, #ff6b6b 60%, var(--danger) 100%);
+        }
+
+        /* Header Section */
+        .icon-wrapper-danger {
+            width: 64px;
+            height: 64px;
+            background: var(--danger-tint);
+            color: var(--danger);
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 24px;
+        }
+
+        h2.title {
+            font-family: 'Manrope', sans-serif;
+            font-weight: 800;
+            font-size: 1.6rem;
+            color: var(--ink);
+            text-align: center;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .subtitle {
+            font-size: 0.9rem;
+            color: var(--muted);
+            line-height: 1.5;
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        /* Form Inputs */
+        .field-group { margin-bottom: 24px; }
+        
+        .field-label {
+            font-size: 0.7rem; font-weight: 700; color: var(--muted);
+            text-transform: uppercase; letter-spacing: 0.12em;
+            margin-bottom: 8px; display: block;
+        }
+
+        .custom-input {
+            width: 100%;
+            background: #fbfcfb;
+            border: 1px solid var(--rule);
+            border-radius: 12px;
+            padding: 14px 16px;
+            font-size: 0.95rem;
+            color: var(--ink);
+            transition: all 0.2s ease;
+        }
+        .custom-input:focus {
+            outline: none;
+            background: var(--paper);
+            border-color: var(--danger);
+            box-shadow: 0 0 0 4px rgba(217, 48, 37, 0.1);
+        }
+        .custom-input::placeholder { color: #b7c0ba; }
+
+        /* Warning Checkbox Box */
+        .warning-box {
+            background: var(--danger-tint);
+            border: 1px solid #f9d6d4;
+            border-radius: 12px;
+            padding: 16px;
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+        .warning-box input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            accent-color: var(--danger);
+            margin-top: 2px;
+            cursor: pointer;
+        }
+        .warning-label {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #a51d14;
+            line-height: 1.4;
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .btn-danger-action {
+            width: 100%;
+            background: var(--danger);
+            color: #fff;
+            border: none;
+            border-radius: 12px;
+            padding: 16px;
+            font-family: 'Manrope', sans-serif;
+            font-weight: 700;
+            font-size: 0.95rem;
+            letter-spacing: 0.01em;
+            transition: background 0.25s ease, transform 0.15s ease;
+        }
+        .btn-danger-action:hover { background: var(--danger-deep); transform: translateY(-1px); }
+        .btn-danger-action:active { transform: translateY(0); }
+    </style>
+</head>
+<body>
+    <!-- PREMIUM NAVBAR -->
+    <nav class="navbar navbar-custom sticky-top">
+        <div class="container-fluid max-w-lg d-flex align-items-center justify-content-between">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn p-0 border-0 text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
+                </button>
+                <a class="brand-logo" href="/dashboard">PayWallet</a>
+            </div>
+            
+            <div class="dropdown">
+                <a href="#" class="dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
+                    <div class="nav-avatar-mini shadow-sm">
+                        <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
+                    </div>
+                </a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PREMIUM SIDEBAR -->
+    <div class="offcanvas offcanvas-start offcanvas-custom" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--paper);">
+        <div class="offcanvas-header border-bottom px-4 py-4">
+            <h5 class="brand-logo mb-0">PayWallet Hub</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        </div>
+        <div class="offcanvas-body p-0 py-3">
+            <ul class="nav flex-column">
+                <li class="nav-item">
+                    <a href="/dashboard" class="nav-link sidebar-link px-4 py-3">
+                        <i class="bi bi-house-door me-3 fs-5 align-middle"></i> Dashboard
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="page-wrap">
+        <a href="/dashboard" class="back-link">&larr; BACK TO DASHBOARD</a>
+
+        <div th:if="${txSuccess}" class="alert alert-success border-0 shadow-sm" th:text="${txSuccess}"></div>
+        <div th:if="${txError}" class="alert alert-danger border-0 shadow-sm" th:text="${txError}"></div>
+
+        <section class="card p-4 mb-4 border-0 shadow-sm rounded-4">
+            <div class="d-flex justify-content-between align-items-start gap-3">
+                <div><span class="small text-uppercase fw-bold text-secondary">Wallet controls</span><h2 class="h5 fw-bold mt-1">Wallet status: <span th:text="${wallet.status}">ACTIVE</span></h2><p class="small text-muted mb-0">Freeze outgoing wallet payments if you need a pause. Unfreeze requires your MPIN.</p></div>
+                <i class="bi bi-shield-lock fs-3 text-success"></i>
+            </div>
+            <form th:action="@{/dashboard/wallet-status}" method="post" class="row g-2 align-items-end mt-2">
+                <div class="col-sm-4"><label class="form-label small fw-bold" for="walletAction">Action</label><select id="walletAction" class="form-select" name="action"><option value="FREEZE" th:if="${wallet.status == 'ACTIVE'}">Freeze wallet</option><option value="UNFREEZE" th:if="${wallet.status != 'ACTIVE'}">Unfreeze wallet</option></select></div>
+                <div class="col-sm-5"><label class="form-label small fw-bold" for="walletPin">4-digit MPIN</label><input id="walletPin" class="form-control" name="pin" type="password" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" required autocomplete="off"></div>
+                <div class="col-sm-3"><button class="btn btn-success fw-bold w-100" type="submit">Update</button></div>
+            </form>
+        </section>
+        
+        <div class="card-danger-zone">
+            
+            <div class="icon-wrapper-danger">
+                <!-- SVG Warning Triangle -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" class="bi bi-exclamation-triangle-fill" viewBox="0 0 16 16">
+                  <path d="M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z"/>
+                </svg>
+            </div>
+            
+            <h2 class="title">Close Account</h2>
+            <p class="subtitle">Closing signs you out and disables future access. For a traceable demo ledger, transaction records are retained. First move out your wallet and savings balances and resolve pending requests.</p>
+            
+            <form th:action="@{/dashboard/delete-account}" method="POST">
+                
+                <div class="field-group">
+                    <label class="field-label">Confirm Password</label>
+                    <input type="password" class="custom-input" name="password" placeholder="Enter your current password" required>
+                </div>
+                
+                <!-- Specialized Warning Box -->
+                <div class="warning-box">
+                    <input type="checkbox" id="confirmDelete" required>
+                    <label class="warning-label" for="confirmDelete">
+                        I understand that this action is irreversible and all data will be lost.
+                    </label>
+                </div>
+                
+                <button type="submit" class="btn-danger-action">Close my account</button>
+            </form>
+
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
