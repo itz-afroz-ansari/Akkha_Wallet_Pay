@@ -1,40 +1,110 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Scan to pay - Akhha Pay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Scan &amp; Pay - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        :root{--ink:#10271e;--green:#0f7a4c;--muted:#78857d;--line:#e5ebe7}*{box-sizing:border-box}body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(520px,100%);background:white;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 18px 50px rgba(22,57,39,.08)}.back{color:var(--muted);text-decoration:none;font-size:.73rem;font-weight:800;letter-spacing:.1em}.card h1{font:800 1.5rem Manrope,sans-serif;margin:20px 0 7px}.card p{font-size:.82rem;color:var(--muted);line-height:1.5}.reader{overflow:hidden;border-radius:17px;margin:20px 0}.reader video{border-radius:12px}.status{font-size:.8rem;min-height:25px;color:var(--green)}.manual{border-top:1px solid var(--line);padding-top:18px;margin-top:17px}.form-control{min-height:44px;border-radius:10px;border-color:var(--line)}.btn-go{border:0;border-radius:10px;background:var(--green);color:white;font-weight:800;padding:11px 15px}.demo{font-size:.7rem!important;margin-top:15px}
+        .page-wrap {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 40px 18px 60px;
+        }
+        .scanner-view-container {
+            border-radius: 20px;
+            overflow: hidden;
+            background: #0f172a;
+            margin: 20px 0 16px;
+            min-height: 260px;
+            display: grid;
+            place-items: center;
+        }
     </style>
 </head>
-<body><main class="card"><a th:href="@{/dashboard}" class="back">&larr; DASHBOARD</a><h1>Scan a PayWallet QR</h1><p>Use your camera to scan another wallet’s code. You’ll review the recipient before sending.</p>
-    <div id="qrReader" class="reader"></div><div id="scanStatus" class="status" role="status">Allow camera access to scan a QR code.</div>
-    <div class="manual"><p class="mb-2 fw-semibold text-dark">Or enter a wallet ID</p><form id="walletForm" class="d-flex gap-2"><input id="walletId" class="form-control" placeholder="WLT…" required maxlength="20"><button class="btn-go" type="submit">Continue</button></form></div>
-    <p class="demo">Only PayWallet demo codes are accepted. Scanning never sends money; you confirm the transfer on the next screen.</p>
-</main>
-<script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script>
-  (function () {
-    var status = document.getElementById('scanStatus');
-    function continueWithWallet(wallet) {
-      if (!/^WLT[A-Z0-9]{13}$/.test(wallet)) { status.textContent = 'That does not look like a PayWallet ID.'; return; }
-      window.location.assign('/dashboard/pay?wallet=' + encodeURIComponent(wallet));
-    }
-    document.getElementById('walletForm').addEventListener('submit', function (event) {
-      event.preventDefault(); continueWithWallet(document.getElementById('walletId').value.trim().toUpperCase());
-    });
-    if (!window.Html5Qrcode) { status.textContent = 'Camera scanner unavailable. Enter a wallet ID below.'; return; }
-    var scanner = new Html5Qrcode('qrReader');
-    scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 230, height: 230 } }, function (decoded) {
-      try {
-        var url = new URL(decoded);
-        if (url.origin !== window.location.origin || url.pathname !== '/dashboard/pay') throw new Error('external');
-        var wallet = url.searchParams.get('wallet') || '';
-        scanner.stop().catch(function () {});
-        continueWithWallet(wallet);
-      } catch (_) { status.textContent = 'That QR is not a PayWallet code. Try another one.'; }
-    }, function () {}).catch(function () { status.textContent = 'Camera access is unavailable. Enter a wallet ID below.'; });
-  })();
-</script></body></html>
+<body>
+    <div class="page-wrap">
+        <a th:href="@{/dashboard}" class="btn-outline-custom mb-4 py-2 px-3 fw-bold small">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="card-modern shadow-lg">
+            <div class="d-flex align-items-center gap-3 mb-2">
+                <div class="quick-action-icon icon-cyan" style="width:46px; height:46px; font-size:1.2rem;">
+                    <i class="bi bi-qr-code-scan"></i>
+                </div>
+                <div>
+                    <span class="text-uppercase fw-bold text-muted" style="font-size: 0.68rem; letter-spacing: 0.12em;">CAMERA SCANNER</span>
+                    <h3 class="fw-bold mb-0">Scan to Pay</h3>
+                </div>
+            </div>
+
+            <p class="text-muted small mb-3">Scan an Akhha Pay QR code to instantly fill recipient details and transfer money.</p>
+
+            <div class="scanner-view-container">
+                <div id="qrReader" class="w-100"></div>
+            </div>
+
+            <div id="scanStatus" class="alert alert-info border-0 rounded-3 small py-2 text-center mb-3">
+                <i class="bi bi-camera me-1"></i> Point your camera at a QR code to scan.
+            </div>
+
+            <!-- Manual Wallet ID Input -->
+            <div class="p-3 bg-light rounded-4 border">
+                <label class="form-label-custom mb-2">Or Enter Wallet ID Manually</label>
+                <form id="walletForm" class="d-flex gap-2">
+                    <input id="walletId" class="form-control form-control-modern" placeholder="WLT0000000000000" required maxlength="20">
+                    <button class="btn-emerald py-2 px-3 text-nowrap" type="submit">
+                        <span>Continue</span> <i class="bi bi-arrow-right"></i>
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" referrerpolicy="no-referrer"></script>
+    <script>
+      (function () {
+        var status = document.getElementById('scanStatus');
+        function continueWithWallet(wallet) {
+          if (!/^WLT[A-Z0-9]{13}$/.test(wallet)) {
+              status.className = 'alert alert-danger border-0 rounded-3 small py-2 text-center mb-3';
+              status.textContent = 'Invalid Akhha Pay Wallet ID format.';
+              return;
+          }
+          window.location.assign('/dashboard/pay?wallet=' + encodeURIComponent(wallet));
+        }
+
+        document.getElementById('walletForm').addEventListener('submit', function (event) {
+          event.preventDefault();
+          continueWithWallet(document.getElementById('walletId').value.trim().toUpperCase());
+        });
+
+        if (!window.Html5Qrcode) {
+          status.textContent = 'Camera scanner unavailable. Enter wallet ID manually.';
+          return;
+        }
+
+        var scanner = new Html5Qrcode('qrReader');
+        scanner.start({ facingMode: 'environment' }, { fps: 10, qrbox: { width: 220, height: 220 } }, function (decoded) {
+          try {
+            var url = new URL(decoded);
+            if (url.origin !== window.location.origin || url.pathname !== '/dashboard/pay') throw new Error('external');
+            var wallet = url.searchParams.get('wallet') || '';
+            scanner.stop().catch(function () {});
+            continueWithWallet(wallet);
+          } catch (_) {
+            status.className = 'alert alert-warning border-0 rounded-3 small py-2 text-center mb-3';
+            status.textContent = 'Unrecognized QR format. Please scan an Akhha Pay QR.';
+          }
+        }, function () {}).catch(function () {
+          status.textContent = 'Camera permission not granted. Enter wallet ID manually below.';
+        });
+      })();
+    </script>
+</body>
+</html>

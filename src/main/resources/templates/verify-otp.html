@@ -3,182 +3,116 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Verify Identity - PayWallet</title>
+    <title>Verify Identity - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/auth.css}">
     <style>
-        :root {
-            --ink: #0f2a1f;
-            --paper: #ffffff;
-            --rule: #e6e9e7;
-            --emerald: #0f7a4c;
-            --emerald-deep: #0b5c3a;
-            --emerald-tint: #eaf5ef;
-            --muted: #7c877f;
-            --danger: #d93025;
-            --danger-tint: #fce8e6;
-        }
-
-        * { box-sizing: border-box; }
-
-        body {
-            background: #f8faf9;
-            font-family: 'Inter', sans-serif;
-            color: var(--ink);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 24px;
-        }
-
-        .auth-wrapper {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .card-auth {
-            background: var(--paper);
-            border-radius: 24px;
-            padding: 48px 36px;
-            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
-            position: relative;
-            overflow: hidden;
+        .otp-box-wrap {
+            max-width: 480px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 28px;
+            padding: 48px 40px;
+            box-shadow: 0 25px 70px -15px rgba(11, 41, 28, 0.16);
+            border: 1px solid rgba(15, 122, 76, 0.1);
             text-align: center;
         }
-
-        .card-auth::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--emerald) 0%, #4fa87f 60%, var(--emerald) 100%);
-        }
-
-        /* Distinctive Security Icon Header */
-        .icon-wrapper {
-            width: 64px;
-            height: 64px;
-            background: var(--emerald-tint);
-            color: var(--emerald-deep);
+        .otp-badge-icon {
+            width: 68px;
+            height: 68px;
             border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            background: #ecfdf5;
+            color: #0f7a4c;
+            display: grid;
+            place-items: center;
+            font-size: 1.8rem;
             margin: 0 auto 24px;
+            box-shadow: 0 8px 20px rgba(15, 122, 76, 0.15);
         }
-
-        h2.title {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-size: 1.6rem;
-            color: var(--ink);
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--muted);
-            line-height: 1.5;
-            margin-bottom: 32px;
-            padding: 0 10px;
-        }
-
-        .alert-custom {
-            border-radius: 12px;
-            padding: 14px 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            margin-bottom: 24px;
-            border: none;
-            background: var(--danger-tint);
-            color: #a51d14;
-        }
-
-        /* Specialized OTP Input Field */
-        .otp-input {
+        .otp-input-field {
             width: 100%;
-            background: #fbfcfb;
-            border: 2px solid var(--rule);
+            background: #f8fafc;
+            border: 2px solid #e2e8f0;
             border-radius: 16px;
             padding: 16px;
-            font-size: 2rem;
             font-family: 'Manrope', sans-serif;
+            font-size: 2.2rem;
             font-weight: 800;
-            color: var(--ink);
+            color: #0f172a;
             text-align: center;
-            letter-spacing: 0.4em; /* Spaces out the numbers */
-            padding-left: calc(16px + 0.4em); /* Offsets the letter spacing to keep it perfectly centered */
+            letter-spacing: 0.35em;
+            padding-left: calc(16px + 0.35em);
             transition: all 0.2s ease;
             margin-bottom: 24px;
         }
-        .otp-input:focus {
+        .otp-input-field:focus {
             outline: none;
-            background: var(--paper);
-            border-color: var(--emerald);
-            box-shadow: 0 0 0 4px rgba(15, 122, 76, 0.1);
+            background: #ffffff;
+            border-color: #0f7a4c;
+            box-shadow: 0 0 0 5px rgba(15, 122, 76, 0.15);
         }
-        .otp-input::placeholder { 
-            color: #d3d9d5; 
-            letter-spacing: normal; /* Removes weird spacing on the placeholder text */
+        .otp-input-field::placeholder {
+            color: #cbd5e1;
+            letter-spacing: normal;
             font-weight: 500;
             font-size: 1.2rem;
-            transform: translateY(-4px);
-            display: inline-block;
         }
-
-        .btn-auth {
-            width: 100%;
-            background: var(--emerald); /* Use emerald here to signify an 'approval' action */
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'Manrope', sans-serif;
+        .email-chip {
+            background: #f1f5f9;
+            color: #0f172a;
             font-weight: 700;
-            font-size: 1rem;
-            letter-spacing: 0.01em;
-            transition: background 0.25s ease, transform 0.15s ease;
+            padding: 3px 10px;
+            border-radius: 6px;
+            display: inline-block;
+            word-break: break-all;
         }
-        .btn-auth:hover {
-            background: var(--emerald-deep);
-            transform: translateY(-1px);
-        }
-        .btn-auth:active { transform: translateY(0); }
-
     </style>
 </head>
 <body>
-    <div class="auth-wrapper">
-        <div class="card-auth">
-            
-            <div class="icon-wrapper">
-                <!-- SVG Padlock Icon -->
-                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                    <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                    <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-                </svg>
+    <div class="container py-4">
+        <div class="otp-box-wrap">
+            <div class="otp-badge-icon">
+                <i class="bi bi-shield-lock-fill"></i>
             </div>
 
-            <h2 class="title">Verification Required</h2>
-            <p class="subtitle">Enter the secure 6-digit code sent to your email address. The code expires after 5 minutes.</p>
-            
-            <!-- Dynamic Error Alert -->
-            <div th:if="${error}" class="alert-custom" th:text="${error}"></div>
-            
+            <h2 class="title" style="text-align: center; font-size: 1.8rem;">Two-Factor Verification</h2>
+            <p class="subtitle" style="text-align: center; margin-bottom: 24px;">
+                Enter the 6-digit security code sent to <br>
+                <span class="email-chip" th:text="${session.tempEmail != null ? session.tempEmail : 'your email address'}">your@email.com</span>
+            </p>
+
+            <!-- Alerts -->
+            <div th:if="${error}" class="alert-custom alert-error text-start">
+                <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
+                <span th:text="${error}"></span>
+            </div>
+            <div th:if="${param.resent}" class="alert-custom alert-success-custom text-start">
+                <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                <span>A fresh 6-digit code has been dispatched to your email.</span>
+            </div>
+
             <form th:action="@{/verify-otp}" method="post">
-                
-                <input type="text" name="otp" class="otp-input" placeholder="000000" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autocomplete="one-time-code" aria-label="Six-digit email verification code">
-                
-                <button type="submit" class="btn-auth" th:text="${session.otpPurpose == 'REGISTER'} ? 'Verify email and continue' : 'Verify and sign in'">Verify and continue</button>
+                <input type="text" name="otp" class="otp-input-field" placeholder="000000" inputmode="numeric" pattern="[0-9]{6}" minlength="6" maxlength="6" required autofocus autocomplete="one-time-code" aria-label="6 digit verification code">
+
+                <button type="submit" class="btn-auth w-100">
+                    <span th:text="${session.otpPurpose == 'REGISTER'} ? 'Verify Email &amp; Complete Registration' : 'Verify Identity &amp; Sign In'">Verify &amp; Continue</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </button>
             </form>
-            <form th:action="@{/resend-otp}" method="post" class="mt-3">
-                <button type="submit" class="btn btn-link text-success fw-semibold text-decoration-none">Send a new code</button>
-            </form>
-            
+
+            <div class="d-flex justify-content-between align-items-center mt-4 pt-2 border-top">
+                <a th:href="@{/}" class="small text-muted text-decoration-none fw-semibold">
+                    <i class="bi bi-arrow-left me-1"></i> Back to Sign In
+                </a>
+                <form th:action="@{/resend-otp}" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-link p-0 text-decoration-none fw-bold" style="color: var(--auth-primary); font-size: 0.85rem;">
+                        <i class="bi bi-arrow-repeat me-1"></i> Resend Code
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 </body>

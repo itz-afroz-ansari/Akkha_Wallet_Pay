@@ -1,30 +1,92 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Receive money - Akhha Pay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>My QR Code - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
-    <link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        :root{--ink:#10271e;--green:#0f7a4c;--pale:#eaf5ef;--muted:#78857d;--line:#e5ebe7}*{box-sizing:border-box}body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh;display:grid;place-items:center;padding:20px}.card{width:min(480px,100%);background:white;border:1px solid var(--line);border-radius:24px;padding:30px;text-align:center;box-shadow:0 18px 50px rgba(22,57,39,.08)}.back{display:block;text-align:left;color:var(--muted);text-decoration:none;font-size:.74rem;font-weight:800;letter-spacing:.1em}.mark{width:54px;height:54px;margin:24px auto 12px;display:grid;place-items:center;background:var(--pale);color:var(--green);border-radius:17px;font-size:1.4rem}.card h1{font:800 1.5rem Manrope,sans-serif}.card p{font-size:.84rem;color:var(--muted);line-height:1.55}.qr-shell{display:inline-grid;place-items:center;margin:10px auto 15px;padding:17px;border:1px solid var(--line);border-radius:20px;background:#fff;min-width:244px;min-height:244px}.wallet-number{font:800 1rem Manrope,sans-serif;letter-spacing:.06em}.label{font-size:.67rem;text-transform:uppercase;letter-spacing:.14em;color:var(--muted);font-weight:800}.actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:21px}.actions a,.actions button{border-radius:11px;padding:12px;text-decoration:none;font-weight:800;font-size:.8rem}.primary{background:var(--green);border:0;color:#fff}.secondary{background:white;border:1px solid var(--line);color:var(--ink)}.demo{font-size:.7rem!important;margin-top:16px!important}
+        .page-wrap {
+            max-width: 480px;
+            margin: 0 auto;
+            padding: 40px 18px 60px;
+        }
+        .qr-frame {
+            display: inline-grid;
+            place-items: center;
+            padding: 24px;
+            background: #ffffff;
+            border: 2px dashed rgba(15, 122, 76, 0.25);
+            border-radius: 24px;
+            margin: 16px auto 20px;
+            box-shadow: 0 10px 30px -10px rgba(15, 122, 76, 0.12);
+        }
     </style>
 </head>
-<body><main class="card" th:data-wallet="${wallet.walletNumber}" id="qrCard">
-    <a th:href="@{/dashboard}" class="back">&larr; DASHBOARD</a><div class="mark"><i class="bi bi-qr-code"></i></div>
-    <h1>Receive with your QR</h1><p>Let another PayWallet user scan this code. They’ll confirm the amount and approve with their MPIN.</p>
-    <div class="qr-shell"><div id="walletQr" aria-label="Your wallet payment QR code"></div></div>
-    <div class="label">Your wallet ID</div><div class="wallet-number" th:text="${wallet.walletNumber}">WLT0000000000000</div>
-    <div class="actions"><a class="primary" th:href="@{/dashboard/scan}"><i class="bi bi-camera me-1"></i> Scan to pay</a><button class="secondary" type="button" onclick="window.print()"><i class="bi bi-download me-1"></i> Save / print</button></div>
-    <p class="demo">DEMO MODE · This QR works within this PayWallet demo app. It does not create a UPI payment.</p>
-</main>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
-<script>
-  (function () {
-    var card = document.getElementById('qrCard');
-    var wallet = card && card.dataset.wallet;
-    var target = document.getElementById('walletQr');
-    if (!wallet || !target || !window.QRCode) { if (target) target.textContent = 'QR generator unavailable'; return; }
-    var payload = window.location.origin + '/dashboard/pay?wallet=' + encodeURIComponent(wallet);
-    new QRCode(target, { text: payload, width: 210, height: 210, colorDark: '#10271e', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
-  })();
-</script></body></html>
+<body>
+    <div class="page-wrap text-center">
+        <div class="text-start mb-4">
+            <a th:href="@{/dashboard}" class="btn-outline-custom py-2 px-3 fw-bold small">
+                <i class="bi bi-arrow-left"></i> Back to Dashboard
+            </a>
+        </div>
+
+        <div class="card-modern shadow-lg" th:data-wallet="${wallet.walletNumber}" id="qrCard">
+            <div class="quick-action-icon icon-purple mx-auto mb-3" style="width:56px; height:56px; font-size:1.5rem;">
+                <i class="bi bi-qr-code"></i>
+            </div>
+
+            <h3 class="fw-bold mb-1">Receive by QR</h3>
+            <p class="text-muted small mb-3">Let any Akhha Pay user scan this QR code to transfer money to you instantly.</p>
+
+            <div class="qr-frame">
+                <div id="walletQr" aria-label="Wallet payment QR code"></div>
+            </div>
+
+            <div class="p-3 bg-light rounded-4 mb-4">
+                <div class="text-uppercase fw-bold text-muted mb-1" style="font-size:0.68rem; letter-spacing:0.12em;">PERSONAL WALLET ID</div>
+                <div class="fw-extrabold font-monospace fs-6 text-dark text-break" th:text="${wallet.walletNumber}">WLT0000000000000</div>
+            </div>
+
+            <div class="row g-2">
+                <div class="col-6">
+                    <a th:href="@{/dashboard/scan}" class="btn-emerald w-100 py-2 fs-6">
+                        <i class="bi bi-camera"></i> Scan to Pay
+                    </a>
+                </div>
+                <div class="col-6">
+                    <button class="btn-outline-custom w-100 py-2 fs-6" type="button" onclick="window.print()">
+                        <i class="bi bi-printer"></i> Save / Print
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js" referrerpolicy="no-referrer"></script>
+    <script>
+      (function () {
+        var card = document.getElementById('qrCard');
+        var wallet = card && card.dataset.wallet;
+        var target = document.getElementById('walletQr');
+        if (!wallet || !target || !window.QRCode) {
+            if (target) target.textContent = 'QR generator unavailable';
+            return;
+        }
+        var payload = window.location.origin + '/dashboard/pay?wallet=' + encodeURIComponent(wallet);
+        new QRCode(target, {
+            text: payload,
+            width: 200,
+            height: 200,
+            colorDark: '#0f172a',
+            colorLight: '#ffffff',
+            correctLevel: QRCode.CorrectLevel.H
+        });
+      })();
+    </script>
+</body>
+</html>

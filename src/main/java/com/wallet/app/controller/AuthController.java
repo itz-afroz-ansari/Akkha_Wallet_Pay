@@ -47,7 +47,7 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password/send-code")
-    public String sendPasswordResetCode(@RequestParam String email, HttpSession session, Model model) {
+    public String sendPasswordResetCode(@RequestParam("email") String email, HttpSession session, Model model) {
         model.addAttribute("mailConfigured", authService.isEmailDeliveryConfigured());
         String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
         if (!normalizedEmail.matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$") || normalizedEmail.length() > 254) {
@@ -91,8 +91,8 @@ public class AuthController {
     }
 
     @PostMapping("/forgot-password/reset")
-    public String resetPassword(@RequestParam String email, @RequestParam String otp,
-                                @RequestParam String newPassword, @RequestParam String confirmPassword,
+    public String resetPassword(@RequestParam("email") String email, @RequestParam("otp") String otp,
+                                @RequestParam("newPassword") String newPassword, @RequestParam("confirmPassword") String confirmPassword,
                                 HttpSession session, Model model) {
         model.addAttribute("mailConfigured", authService.isEmailDeliveryConfigured());
         String resetEmail = (String) session.getAttribute("passwordResetEmail");
@@ -182,7 +182,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public String handleLogin(@RequestParam String email, @RequestParam String password, HttpSession session, Model model) {
+    public String handleLogin(@RequestParam("email") String email, @RequestParam("password") String password, HttpSession session, Model model) {
         String normalizedEmail = email == null ? "" : email.trim().toLowerCase();
         User user = userRepo.findByEmail(normalizedEmail).orElse(null);
         
@@ -214,7 +214,7 @@ public class AuthController {
     }
 
     @PostMapping("/verify-otp")
-    public String verifyOtp(@RequestParam String otp, HttpSession session, HttpServletRequest request, Model model) {
+    public String verifyOtp(@RequestParam("otp") String otp, HttpSession session, HttpServletRequest request, Model model) {
         String email = (String) session.getAttribute("tempEmail");
         String purpose = (String) session.getAttribute("otpPurpose");
         User user = userRepo.findByEmail(email).orElse(null);

@@ -1,57 +1,119 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Recharge &amp; bills - Akhha Pay</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Recharge &amp; Utility Bills - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        :root{--ink:#10271e;--green:#0f7a4c;--pale:#eaf5ef;--muted:#78857d;--line:#e5ebe7}
-        *{box-sizing:border-box}body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh}
-        .wrap{width:min(1080px,calc(100% - 32px));margin:auto;padding:30px 0 60px}.top{display:flex;justify-content:space-between;margin-bottom:26px}
-        .top a{color:var(--muted);font-size:.75rem;font-weight:800;letter-spacing:.1em;text-decoration:none}.brand{color:var(--green)!important;font:800 1rem Manrope,sans-serif!important;letter-spacing:0!important}
-        .hero{padding:26px 30px;border-radius:22px;color:#fff;background:linear-gradient(115deg,#10271e,#15543a 70%,#0f7a4c);margin-bottom:20px}
-        .hero small{color:#a9e3c3;letter-spacing:.16em;text-transform:uppercase;font-weight:800}.hero h1{font:800 clamp(1.6rem,4vw,2.2rem) Manrope,sans-serif;margin:8px 0}.hero p{margin:0;color:#d5e5dc}
-        .grid{display:grid;grid-template-columns:minmax(280px,.85fr) minmax(0,1.2fr);gap:20px;align-items:start}.card{border:1px solid var(--line);background:#fff;border-radius:20px;padding:24px;box-shadow:0 8px 25px rgba(20,52,36,.04)}
-        h2{font:800 1.05rem Manrope,sans-serif;margin:0}.sub{color:var(--muted);font-size:.82rem;line-height:1.5;margin:8px 0 20px}
-        .form-label{font-size:.7rem;text-transform:uppercase;letter-spacing:.1em;font-weight:800;color:#65746b}.form-control,.form-select{min-height:46px;border-color:var(--line);border-radius:11px}.form-control:focus,.form-select:focus{border-color:var(--green);box-shadow:0 0 0 3px #0f7a4c1a}
-        .btn-green{border:0;border-radius:11px;background:var(--green);color:white;font-weight:800;padding:13px}.btn-green:hover{background:#0b5c3a;color:white}
-        .demo{background:#f4f9f6;border:1px solid #e0eee5;border-radius:12px;padding:12px;color:#526359;font-size:.76rem;line-height:1.5}
-        .activity{display:grid;gap:11px}.row-item{display:flex;justify-content:space-between;gap:14px;padding:14px;border:1px solid var(--line);border-radius:14px}.type{font-weight:800;font:700 .9rem Manrope,sans-serif}.meta{font-size:.73rem;color:var(--muted);margin-top:4px}.amount{font:800 1rem Manrope,sans-serif;white-space:nowrap}.state{display:inline-block;border-radius:999px;padding:4px 8px;background:var(--pale);color:#0b6841;font-size:.66rem;font-weight:800;text-transform:capitalize;margin-top:7px}
-        .empty{border:1px dashed var(--line);border-radius:14px;padding:26px;text-align:center;color:var(--muted);font-size:.82rem}
-        @media(max-width:760px){.grid{grid-template-columns:1fr}}@media(max-width:480px){.wrap{width:calc(100% - 22px);padding-top:18px}.hero{padding:22px}.card{padding:18px}}
+        .page-wrap {
+            max-width: 1040px;
+            margin: 0 auto;
+            padding: 36px 18px 60px;
+        }
     </style>
 </head>
-<body><main class="wrap">
-    <div class="top"><a th:href="@{/dashboard}">&larr; DASHBOARD</a><a class="brand" th:href="@{/dashboard}">Akhha Pay</a></div>
-    <header class="hero"><small>Everyday payments</small><h1>Recharge &amp; bills</h1><p>Pay utilities, recharge phones, or top up a FASTag using your wallet.</p></header>
-    <div th:if="${txSuccess}" class="alert alert-success border-0 shadow-sm" th:text="${txSuccess}"></div>
-    <div th:if="${txError}" class="alert alert-danger border-0 shadow-sm" th:text="${txError}"></div>
-    <div class="grid">
-        <section class="card">
-            <h2>Make a payment</h2><p class="sub">Choose a service and enter the matching customer or vehicle reference.</p>
-            <form th:action="@{/dashboard/services/pay}" method="post" id="serviceForm">
-                <input type="hidden" name="operationKey" th:value="${operationKey}">
-                <div class="mb-3"><label class="form-label" for="serviceType">Service</label><select id="serviceType" class="form-select" name="serviceType" required>
-                    <option value="MOBILE_RECHARGE">Mobile prepaid</option><option value="DTH_RECHARGE">DTH recharge</option><option value="BROADBAND">Broadband</option><option value="ELECTRICITY">Electricity bill</option><option value="WATER">Water bill</option><option value="GAS">Gas bill</option><option value="FASTAG">FASTag top-up</option>
-                </select></div>
-                <div class="mb-3"><label class="form-label" for="provider">Operator / biller</label><input id="provider" class="form-control" name="provider" maxlength="60" placeholder="e.g. Demo Mobile" required></div>
-                <div class="mb-3"><label class="form-label" for="accountReference">Mobile, customer, or vehicle number</label><input id="accountReference" class="form-control" name="accountReference" minlength="3" maxlength="80" placeholder="Enter service account reference" required></div>
-                <div class="mb-3"><label class="form-label" for="amount">Amount</label><div class="input-group"><span class="input-group-text bg-white border-end-0">₹</span><input id="amount" class="form-control border-start-0" name="amount" type="number" min="0.01" max="1000000" step="0.01" placeholder="0.00" required></div></div>
-                <button class="btn-green w-100" type="submit">Pay from wallet <i class="bi bi-arrow-right ms-1"></i></button>
-            </form>
-            <div class="demo mt-3"><i class="bi bi-info-circle me-1"></i> DEMO MODE — no real provider is contacted. The mock provider result is configurable. Failed mock attempts do not deduct wallet funds.</div>
-        </section>
-        <section class="card"><h2>Recent service payments</h2><p class="sub">Recharge and bill activity recorded against your wallet.</p>
-            <div th:if="${servicePayments.isEmpty()}" class="empty">Your service payments will appear here.</div>
-            <div th:unless="${servicePayments.isEmpty()}" class="activity">
-                <article class="row-item" th:each="payment : ${servicePayments}">
-                    <div><div class="type" th:text="${#strings.replace(#strings.toLowerCase(payment.serviceType), '_', ' ')}">Service</div><div class="meta" th:text="${payment.providerName + ' · ' + payment.accountReference}">Provider · account</div><div class="meta" th:text="${#temporals.format(payment.createdAt, 'dd MMM yyyy, hh:mm a')}">Date</div><span class="state" th:text="${#strings.toLowerCase(payment.status)}">success</span></div>
-                    <div class="amount" th:text="'−₹' + ${#numbers.formatDecimal(payment.amount,1,2)}">−₹0.00</div>
-                </article>
+<body>
+    <div class="page-wrap">
+        <a th:href="@{/dashboard}" class="btn-outline-custom mb-4 py-2 px-3 fw-bold small">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-muted" style="font-size: 0.68rem; letter-spacing: 0.14em;">UTILITIES &amp; RECHARGES</span>
+                <h2 class="fw-extrabold mb-0">Recharge &amp; Bill Payments</h2>
             </div>
-        </section>
+        </div>
+
+        <!-- Global Alerts -->
+        <div th:if="${txSuccess}" class="alert alert-success border-0 rounded-4 shadow-sm mb-4" th:text="${txSuccess}"></div>
+        <div th:if="${txError}" class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" th:text="${txError}"></div>
+
+        <div class="row g-4">
+            <!-- Payment Form -->
+            <div class="col-lg-5">
+                <div class="card-modern shadow-sm h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="quick-action-icon icon-emerald p-2" style="width:36px; height:36px; font-size:1rem;"><i class="bi bi-lightning-charge-fill"></i></div>
+                        <h5 class="fw-bold mb-0">Pay Biller</h5>
+                    </div>
+                    <p class="text-muted small mb-3">Instant bill settlements &amp; mobile recharge from your wallet.</p>
+
+                    <form th:action="@{/dashboard/services/pay}" method="post" id="serviceForm">
+                        <input type="hidden" name="operationKey" th:value="${operationKey}">
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Select Service</label>
+                            <select id="serviceType" class="form-select form-control-modern" name="serviceType" required>
+                                <option value="MOBILE_RECHARGE">Mobile Prepaid Recharge</option>
+                                <option value="DTH_RECHARGE">DTH Satellite TV</option>
+                                <option value="BROADBAND">Broadband Internet</option>
+                                <option value="ELECTRICITY">Electricity Power</option>
+                                <option value="WATER">Water Utility</option>
+                                <option value="GAS">Piped Gas / Cylinder</option>
+                                <option value="FASTAG">FASTag Toll Top-up</option>
+                            </select>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Operator / Biller Name</label>
+                            <input id="provider" class="form-control form-control-modern" name="provider" maxlength="60" placeholder="e.g. Airtel, Tata Play, Adani Power" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label-custom">Consumer / Account Reference</label>
+                            <input id="accountReference" class="form-control form-control-modern" name="accountReference" minlength="3" maxlength="80" placeholder="e.g. 10-digit mobile or consumer ID" required>
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label-custom">Bill Amount</label>
+                            <div class="currency-input-wrapper">
+                                <span class="currency-symbol" style="font-size:1.5rem;">₹</span>
+                                <input id="amount" class="currency-input-field" style="font-size:1.5rem;" name="amount" type="number" min="0.01" max="1000000" step="0.01" placeholder="0.00" required>
+                            </div>
+                        </div>
+
+                        <button class="btn-emerald w-100 py-3" type="submit">
+                            <i class="bi bi-shield-check me-1"></i> Pay Bill from Wallet
+                        </button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- Recent Bill Payments Feed -->
+            <div class="col-lg-7">
+                <div class="card-modern shadow-sm h-100">
+                    <h5 class="fw-bold mb-3">Recent Utility Payments</h5>
+
+                    <div th:if="${servicePayments.isEmpty()}" class="text-center py-5 bg-light rounded-4">
+                        <i class="bi bi-receipt-cutoff fs-2 text-muted"></i>
+                        <p class="text-muted small mb-0 mt-2">No utility bill payments yet.</p>
+                    </div>
+
+                    <div th:unless="${servicePayments.isEmpty()}" class="d-grid gap-2">
+                        <div th:each="payment : ${servicePayments}" class="tx-item">
+                            <div class="d-flex align-items-center gap-3">
+                                <div class="tx-icon expense"><i class="bi bi-lightning-charge"></i></div>
+                                <div>
+                                    <div class="tx-title" th:text="${#strings.replace(#strings.toUpperCase(payment.serviceType), '_', ' ')}">SERVICE</div>
+                                    <div class="tx-meta" th:text="${payment.providerName + ' · ' + payment.accountReference}">Provider</div>
+                                    <div class="tx-meta" th:text="${#temporals.format(payment.createdAt, 'dd MMM yyyy, hh:mm a')}">Date</div>
+                                </div>
+                            </div>
+                            <div class="text-end">
+                                <div class="tx-amount negative" th:text="'−₹' + ${#numbers.formatDecimal(payment.amount,1,2)}">−₹0.00</div>
+                                <span class="status-badge completed mt-1" th:text="${payment.status}">SUCCESS</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</main></body></html>
+</body>
+</html>

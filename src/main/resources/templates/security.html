@@ -3,345 +3,123 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Security & PIN - PayWallet</title>
+    <title>Security &amp; MPIN - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        :root {
-            --ink: #0f2a1f;
-            --paper: #ffffff;
-            --rule: #e6e9e7;
-            --emerald: #0f7a4c;
-            --emerald-deep: #0b5c3a;
-            --emerald-tint: #eaf5ef;
-            --muted: #7c877f;
-            --danger: #d93025;
+        .page-wrap {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 36px 18px 60px;
         }
-
-        * { box-sizing: border-box; }
-
-        body {
-            background: #f8faf9;
-            font-family: 'Inter', sans-serif;
-            color: var(--ink);
-            min-height: 100vh;
-        }
-
-        /* --- Custom Navbar & Sidebar --- */
-        .navbar-custom {
-            background: var(--paper);
-            border-bottom: 1px solid var(--rule);
-            padding: 12px 24px;
-        }
-        .brand-logo {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-size: 1.4rem;
-            color: var(--emerald-deep);
-            letter-spacing: -0.02em;
-            text-decoration: none;
-        }
-        
-        .nav-avatar-mini {
-            width: 40px; height: 40px;
-            background: var(--emerald-tint);
-            color: var(--emerald-deep);
-            border-radius: 12px;
-            display: flex; align-items: center; justify-content: center;
-            font-family: 'Manrope', sans-serif; font-weight: 700; font-size: 1.1rem;
-            transition: transform 0.2s ease;
-        }
-        .nav-avatar-mini:hover { transform: translateY(-1px); }
-        .dropdown-toggle::after { display: none; }
-
-        .offcanvas-custom { border-right: 1px solid var(--rule); }
-        .sidebar-link {
-            color: var(--ink); font-weight: 600;
-            transition: all 0.2s ease;
-            border-radius: 12px; margin: 4px 16px;
-        }
-        .sidebar-link:hover { background: var(--emerald-tint); color: var(--emerald-deep); }
-
-        /* --- Security Page Specifics --- */
-        .page-wrap { max-width: 1000px; margin: 0 auto; padding: 38px 24px 80px; }
-
-        .back-link {
-            font-size: 0.72rem; font-weight: 700; letter-spacing: 0.14em; color: var(--muted);
-            text-decoration: none; display: inline-flex; align-items: center; gap: 6px; margin-bottom: 32px; transition: color 0.2s ease;
-            text-transform: uppercase;
-        }
-        .back-link:hover { color: var(--emerald-deep); }
-
-        .card-security {
-            background: var(--paper); border-radius: 24px;
-            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
-            position: relative; overflow: hidden;
-            padding: 48px 40px;
-        }
-        .card-security::before {
-            content: ""; position: absolute; top: 0; left: 0; right: 0; height: 5px;
-            background: linear-gradient(90deg, var(--emerald) 0%, #4fa87f 60%, var(--emerald) 100%);
-        }
-
-        /* Header Section */
-        .icon-wrapper {
-            width: 64px;
-            height: 64px;
-            background: var(--ink);
-            color: #fff;
-            border-radius: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin: 0 auto 24px;
-            box-shadow: 0 8px 16px rgba(15,42,31,0.1);
-        }
-
-        h2.title {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
+        .pin-input-custom {
+            font-family: var(--font-heading);
             font-size: 1.6rem;
-            color: var(--ink);
-            text-align: center;
-            margin-bottom: 12px;
-            letter-spacing: -0.02em;
-        }
-
-        .subtitle {
-            font-size: 0.9rem;
-            color: var(--muted);
-            line-height: 1.5;
-            text-align: center;
-            margin-bottom: 40px;
-        }
-
-        /* Specialized PIN/OTP Inputs */
-        .field-group { margin-bottom: 28px; }
-        
-        .label-row {
-            display: flex;
-            justify-content: space-between;
-            align-items: flex-end;
-            margin-bottom: 8px;
-        }
-
-        .field-label {
-            font-size: 0.7rem; font-weight: 700; color: var(--muted);
-            text-transform: uppercase; letter-spacing: 0.12em;
-            margin: 0;
-        }
-
-        .send-otp-link {
-            font-size: 0.75rem; font-weight: 700; color: var(--emerald-deep);
-            text-decoration: none; transition: color 0.2s ease;
-        }
-        .send-otp-link:hover { color: var(--ink); text-decoration: underline; }
-
-        .secure-input {
-            width: 100%;
-            background: #fbfcfb;
-            border: 2px solid var(--rule);
-            border-radius: 16px;
-            padding: 16px;
-            font-size: 2rem;
-            font-family: 'Manrope', sans-serif;
             font-weight: 800;
-            color: var(--ink);
             text-align: center;
-            letter-spacing: 0.4em;
-            padding-left: calc(16px + 0.4em);
-            transition: all 0.2s ease;
-        }
-        .secure-input:focus {
-            outline: none;
-            background: var(--paper);
-            border-color: var(--emerald);
-            box-shadow: 0 0 0 4px rgba(15, 122, 76, 0.1);
-        }
-        .secure-input::placeholder { 
-            color: #d3d9d5; 
-            letter-spacing: normal;
-            font-weight: 500;
-            font-size: 1.2rem;
-            transform: translateY(-4px);
-            display: inline-block;
-        }
-
-        .btn-confirm {
-            width: 100%;
-            background: var(--ink);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 700;
-            font-size: 0.95rem;
-            letter-spacing: 0.01em;
-            margin-top: 12px;
-            transition: background 0.25s ease, transform 0.15s ease;
-        }
-        .btn-confirm:hover { background: var(--emerald-deep); transform: translateY(-1px); }
-        .btn-confirm:active { transform: translateY(0); }
-
-        .security-heading { display:flex; align-items:center; justify-content:space-between; gap:24px; margin:14px 0 26px; }
-        .security-eyebrow { display:inline-flex; align-items:center; gap:8px; color:var(--emerald); font-size:.7rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
-        .security-page-title { margin:8px 0 6px; font:800 clamp(1.8rem,4vw,2.6rem)/1.1 'Manrope',sans-serif; letter-spacing:-.05em; }
-        .security-heading p { color:var(--muted); margin:0; }
-        .shield-orbit { width:68px; height:68px; flex:none; display:grid; place-items:center; border-radius:23px; background:linear-gradient(145deg,#dff4e7,#f5fbf7); color:var(--emerald); font-size:1.9rem; box-shadow:inset 0 0 0 1px #cce8d6; }
-        .security-layout { display:grid; grid-template-columns:.8fr 1.2fr; gap:20px; align-items:stretch; }
-        .security-guide { padding:28px; border-radius:24px; color:#fff; background:linear-gradient(145deg,#10271e,#14553a); position:relative; overflow:hidden; }
-        .security-guide::after { content:""; position:absolute; width:220px; height:220px; right:-110px; bottom:-135px; border:1px solid rgba(255,255,255,.15); border-radius:50%; box-shadow:0 0 0 25px rgba(255,255,255,.03),0 0 0 52px rgba(255,255,255,.025); }
-        .guide-label { position:relative; z-index:1; color:#a8dec0; font-size:.68rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
-        .guide-title { position:relative; z-index:1; margin:12px 0 24px; font:800 1.3rem/1.25 'Manrope',sans-serif; }
-        .guide-step { position:relative; z-index:1; display:flex; gap:13px; margin:18px 0; }
-        .guide-step-number { width:27px; height:27px; flex:none; display:grid; place-items:center; border-radius:9px; background:rgba(255,255,255,.13); color:#c8f4d7; font-size:.78rem; font-weight:800; }
-        .guide-step strong { display:block; font-size:.83rem; margin:1px 0 4px; }
-        .guide-step span { color:rgba(255,255,255,.7); font-size:.76rem; line-height:1.45; }
-        .guide-note { position:relative; z-index:1; display:flex; gap:9px; align-items:flex-start; padding-top:18px; margin-top:22px; border-top:1px solid rgba(255,255,255,.16); color:rgba(255,255,255,.72); font-size:.76rem; line-height:1.5; }
-        .guide-note i { color:#a8dec0; }
-        .card-security { padding:30px; border:1px solid rgba(15,42,31,.07); }
-        .card-security::before { height:4px; }
-        .form-heading { display:flex; align-items:flex-start; gap:14px; margin-bottom:22px; }
-        .form-icon { width:44px; height:44px; flex:none; display:grid; place-items:center; border-radius:14px; background:var(--emerald-tint); color:var(--emerald); font-size:1.2rem; }
-        .form-heading h2 { margin:0 0 5px; font:800 1.2rem 'Manrope',sans-serif; }
-        .form-heading p { margin:0; color:var(--muted); font-size:.82rem; line-height:1.45; }
-        .email-destination { display:flex; align-items:center; gap:10px; padding:11px 13px; margin-bottom:20px; border:1px solid #dceee2; border-radius:13px; background:#f5fbf7; color:var(--emerald-deep); font-size:.82rem; font-weight:700; overflow-wrap:anywhere; }
-        .email-destination i { font-size:1rem; }
-        .pin-pair { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-        .pin-field .secure-input { padding:13px 12px; font-size:1.55rem; letter-spacing:.28em; }
-        .otp-row { display:flex; gap:10px; align-items:stretch; }
-        .otp-row .secure-input { min-width:0; flex:1; padding:12px; font-size:1.45rem; letter-spacing:.25em; }
-        .send-otp-link { display:inline-flex; align-items:center; justify-content:center; gap:7px; border:1px solid #b9dcc7; border-radius:13px; background:#f2faf5; padding:0 13px; cursor:pointer; white-space:nowrap; }
-        .send-otp-link:disabled { cursor:wait; opacity:.75; }
-        .otp-feedback { display:block; margin-top:10px; padding:10px 12px; border-radius:11px; font-size:.8rem; line-height:1.4; }
-        .otp-feedback.success { color:#17643c; background:#eaf7ef; }
-        .otp-feedback.error { color:#9d3027; background:#fff0ee; }
-        .form-alert { border-radius:12px; font-size:.83rem; }
-        .btn-confirm { margin-top:16px; }
-        .field-label { color:#66746b; }
-        .secure-input { font-size:1.5rem; }
-        .back-link { margin-bottom:20px; }
-
-        @media (max-width: 760px) {
-            .security-layout { grid-template-columns:1fr; }
-            .security-guide { order:2; }
-        }
-        @media (max-width: 520px) {
-            .page-wrap { padding:26px 16px 48px; }
-            .security-heading { align-items:flex-start; }
-            .shield-orbit { width:52px; height:52px; border-radius:18px; font-size:1.45rem; }
-            .card-security { padding:23px 18px; }
-            .security-guide { padding:23px 20px; }
-            .pin-pair { grid-template-columns:1fr; gap:0; }
-            .otp-row { flex-direction:column; }
-            .send-otp-link { min-height:46px; }
+            letter-spacing: 0.25em;
         }
     </style>
 </head>
 <body>
-    <!-- PREMIUM NAVBAR -->
-    <nav class="navbar navbar-custom sticky-top">
-        <div class="container-fluid max-w-lg d-flex align-items-center justify-content-between">
-            <div class="d-flex align-items-center gap-3">
-                <button class="btn p-0 border-0 text-dark" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="currentColor" class="bi bi-list" viewBox="0 0 16 16"><path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5zm0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5z"/></svg>
-                </button>
-                <a class="brand-logo" href="/dashboard">PayWallet</a>
-            </div>
-            
-            <div class="dropdown">
-                <a href="#" class="dropdown-toggle text-decoration-none" data-bs-toggle="dropdown">
-                    <div class="nav-avatar-mini shadow-sm">
-                        <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
-                    </div>
-                </a>
-            </div>
-        </div>
-    </nav>
+    <div class="page-wrap">
+        <a th:href="@{/dashboard}" class="btn-outline-custom mb-4 py-2 px-3 fw-bold small">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
 
-    <!-- PREMIUM SIDEBAR -->
-    <div class="offcanvas offcanvas-start offcanvas-custom" tabindex="-1" id="sidebarMenu" style="width: 280px; background: var(--paper);">
-        <div class="offcanvas-header border-bottom px-4 py-4">
-            <h5 class="brand-logo mb-0">PayWallet Hub</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-muted" style="font-size: 0.68rem; letter-spacing: 0.14em;">WALLET PROTECTION</span>
+                <h2 class="fw-extrabold mb-0">Security &amp; 4-Digit MPIN</h2>
+            </div>
+            <div class="quick-action-icon icon-emerald" style="width:48px; height:48px; font-size:1.3rem;">
+                <i class="bi bi-shield-lock-fill"></i>
+            </div>
         </div>
-        <div class="offcanvas-body p-0 py-3">
-            <ul class="nav flex-column">
-                <li class="nav-item">
-                    <a href="/dashboard" class="nav-link sidebar-link px-4 py-3">
-                        <i class="bi bi-house-door me-3 fs-5 align-middle"></i> Dashboard
-                    </a>
-                </li>
-            </ul>
+
+        <!-- Global Alerts -->
+        <div th:if="${txSuccess}" class="alert alert-success border-0 rounded-4 shadow-sm mb-4" th:text="${txSuccess}"></div>
+        <div th:if="${txError}" class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" th:text="${txError}"></div>
+
+        <div class="row g-4">
+            <!-- Security Guide Column -->
+            <div class="col-lg-4">
+                <div class="card-modern shadow-sm h-100 text-white" style="background: linear-gradient(135deg, #091f16 0%, #0d3826 60%, #085233 100%);">
+                    <span class="badge bg-white bg-opacity-15 text-white mb-3">HOW MPIN WORKS</span>
+                    <h4 class="fw-bold mb-3 text-white">Your transactions are PIN-protected.</h4>
+                    
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="badge rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width:28px; height:28px; flex-shrink:0;">1</div>
+                        <div class="small text-white-50"><strong class="text-white d-block">Choose 4 Digits:</strong> Pick a private code only you know.</div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-3">
+                        <div class="badge rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width:28px; height:28px; flex-shrink:0;">2</div>
+                        <div class="small text-white-50"><strong class="text-white d-block">Verify Email OTP:</strong> We send an authorization code to your email.</div>
+                    </div>
+
+                    <div class="d-flex gap-3 mb-4">
+                        <div class="badge rounded-circle bg-white bg-opacity-20 d-flex align-items-center justify-content-center" style="width:28px; height:28px; flex-shrink:0;">3</div>
+                        <div class="small text-white-50"><strong class="text-white d-block">Instant Protection:</strong> All transfers &amp; bill payments require this MPIN.</div>
+                    </div>
+
+                    <div class="pt-3 border-top border-white border-opacity-15 small text-white-50">
+                        <i class="bi bi-info-circle me-1"></i> Never share your MPIN or email verification codes.
+                    </div>
+                </div>
+            </div>
+
+            <!-- Set/Update Form Column -->
+            <div class="col-lg-8">
+                <div class="card-modern shadow-sm h-100">
+                    <div class="d-flex align-items-center gap-2 mb-3">
+                        <div class="quick-action-icon icon-emerald p-2" style="width:36px; height:36px; font-size:1rem;"><i class="bi bi-key-fill"></i></div>
+                        <h5 class="fw-bold mb-0" th:text="${user.pin == null || user.pin.isEmpty()} ? 'Set Up New MPIN' : 'Change Existing MPIN'">Set Your MPIN</h5>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2 p-3 bg-light rounded-4 mb-4 border">
+                        <i class="bi bi-envelope-check-fill text-success fs-5"></i>
+                        <span class="small text-muted">Authorization code will be delivered to <strong class="text-dark" th:text="${user.email}">your email</strong></span>
+                    </div>
+
+                    <form th:action="@{/dashboard/change-pin}" method="POST" id="pinForm">
+                        <div class="row g-3 mb-3">
+                            <div class="col-sm-6">
+                                <label class="form-label-custom" for="newPin">New 4-Digit MPIN</label>
+                                <input id="newPin" type="password" class="form-control form-control-modern pin-input-custom" name="newPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="off">
+                            </div>
+                            <div class="col-sm-6">
+                                <label class="form-label-custom" for="confirmPin">Confirm New MPIN</label>
+                                <input id="confirmPin" type="password" class="form-control form-control-modern pin-input-custom" name="confirmPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" placeholder="••••" required autocomplete="off">
+                            </div>
+                        </div>
+
+                        <!-- Email Code Step -->
+                        <div class="mb-4">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <label class="form-label-custom mb-0" for="otp">6-Digit Email Code</label>
+                            </div>
+                            <div class="input-group">
+                                <input id="otp" type="text" class="form-control form-control-modern font-monospace text-center fw-bold" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" placeholder="000000" required>
+                                <button class="btn btn-outline-custom" id="sendOtpBtn" type="button">
+                                    <i class="bi bi-send me-1"></i> <span>Send Email Code</span>
+                                </button>
+                            </div>
+                            <div id="otpFeedback" class="alert alert-info border-0 rounded-3 py-2 small mt-2" style="display:none;"></div>
+                        </div>
+
+                        <button type="submit" class="btn-emerald w-100 py-3">
+                            <i class="bi bi-shield-check me-1"></i> Save &amp; Authorize MPIN
+                        </button>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
-    <main class="page-wrap">
-        <a href="/dashboard" class="back-link"><i class="bi bi-arrow-left"></i> DASHBOARD</a>
-        <header class="security-heading">
-            <div>
-                <span class="security-eyebrow"><i class="bi bi-shield-check"></i> ACCOUNT PROTECTION</span>
-                <h1 class="security-page-title">Wallet security</h1>
-                <p>Set up your MPIN to approve wallet transfers.</p>
-            </div>
-            <div class="shield-orbit"><i class="bi bi-shield-lock-fill"></i></div>
-        </header>
-
-        <div class="security-layout">
-            <aside class="security-guide">
-                <span class="guide-label">A safer wallet in 3 steps</span>
-                <h2 class="guide-title">Only you can approve a transfer.</h2>
-                <div class="guide-step"><span class="guide-step-number">1</span><div><strong>Choose a 4-digit MPIN</strong><span>Pick a private number you can remember.</span></div></div>
-                <div class="guide-step"><span class="guide-step-number">2</span><div><strong>Verify your email</strong><span>Enter the short-lived code sent to your account email.</span></div></div>
-                <div class="guide-step"><span class="guide-step-number">3</span><div><strong>Confirm and save</strong><span>Your MPIN is protected before it is stored.</span></div></div>
-                <div class="guide-note"><i class="bi bi-info-circle-fill"></i><span>Never share your MPIN or email code. The code expires after five minutes.</span></div>
-            </aside>
-
-            <section class="card-security" aria-labelledby="pinFormTitle">
-                <div th:if="${txSuccess}" class="alert alert-success form-alert" role="status" th:text="${txSuccess}"></div>
-                <div th:if="${txError}" class="alert alert-danger form-alert" role="alert" th:text="${txError}"></div>
-                <div class="form-heading">
-                    <div class="form-icon"><i class="bi bi-key-fill"></i></div>
-                    <div>
-                        <h2 id="pinFormTitle" th:text="${user.pin == null || user.pin.isEmpty()} ? 'Set your MPIN' : 'Update your MPIN'">Set your MPIN</h2>
-                        <p>Use a different code from your account password.</p>
-                    </div>
-                </div>
-
-                <div class="email-destination"><i class="bi bi-envelope-check-fill"></i><span>Verification code goes to <span th:text="${user.email}">your email</span></span></div>
-
-                <form th:action="@{/dashboard/change-pin}" method="POST" id="pinForm">
-                    <div class="pin-pair">
-                        <div class="field-group">
-                            <label class="field-label" for="newPin">New 4-digit MPIN</label>
-                            <input id="newPin" type="password" class="secure-input" name="newPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="••••" aria-describedby="pinHint" required>
-                            <small id="pinHint" class="text-muted">Numbers only</small>
-                        </div>
-                        <div class="field-group">
-                            <label class="field-label" for="confirmPin">Confirm MPIN</label>
-                            <input id="confirmPin" type="password" class="secure-input" name="confirmPin" inputmode="numeric" pattern="[0-9]{4}" maxlength="4" autocomplete="new-password" placeholder="••••" required>
-                        </div>
-                    </div>
-
-                    <div class="field-group mb-2">
-                        <div class="label-row"><label class="field-label" for="otp">6-digit email code</label></div>
-                        <div class="otp-row">
-                            <input id="otp" type="text" class="secure-input" name="otp" inputmode="numeric" pattern="[0-9]{6}" maxlength="6" autocomplete="one-time-code" placeholder="••••••" required>
-                            <button class="send-otp-link" id="sendOtpBtn" type="button"><i class="bi bi-send"></i><span>Send code</span></button>
-                        </div>
-                        <div id="otpFeedback" class="otp-feedback" role="status" aria-live="polite" hidden></div>
-                    </div>
-
-                    <button type="submit" class="btn-confirm"><i class="bi bi-shield-lock me-2"></i>Save MPIN</button>
-                </form>
-            </section>
-        </div>
-    </main>
-    
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const sendOtpBtn = document.getElementById('sendOtpBtn');
@@ -353,54 +131,43 @@
             pinForm.addEventListener('submit', function(event) {
                 if (newPin.value !== confirmPin.value) {
                     event.preventDefault();
-                    confirmPin.setCustomValidity('The MPINs do not match.');
-                    confirmPin.reportValidity();
-                } else {
-                    confirmPin.setCustomValidity('');
+                    alert('The new MPIN and confirmation MPIN do not match.');
                 }
             });
-            confirmPin.addEventListener('input', function() { confirmPin.setCustomValidity(''); });
-
-            function startCooldown(seconds) {
-                let remaining = seconds;
-                sendOtpBtn.disabled = true;
-                const timer = window.setInterval(function() {
-                    remaining -= 1;
-                    sendOtpBtn.querySelector('span').textContent = remaining > 0 ? 'Resend in ' + remaining + 's' : 'Resend code';
-                    if (remaining <= 0) {
-                        window.clearInterval(timer);
-                        sendOtpBtn.disabled = false;
-                    }
-                }, 1000);
-            }
 
             sendOtpBtn.addEventListener('click', function() {
                 sendOtpBtn.disabled = true;
-                sendOtpBtn.querySelector('span').textContent = 'Sending…';
+                sendOtpBtn.querySelector('span').textContent = 'Sending...';
                 fetch('/dashboard/send-pin-otp', { method: 'POST' })
                     .then(response => response.json())
                     .then(data => {
-                        feedback.hidden = false;
-                        feedback.textContent = data.message || (data.success ? 'Email code sent.' : 'Could not send the email code.');
-                        feedback.className = 'otp-feedback ' + (data.success ? 'success' : 'error');
+                        feedback.style.display = 'block';
+                        feedback.textContent = data.message || (data.success ? 'Security code has been dispatched to your email.' : 'Could not send email code.');
+                        feedback.className = data.success ? 'alert alert-success border-0 rounded-3 py-2 small mt-2' : 'alert alert-danger border-0 rounded-3 py-2 small mt-2';
                         if (data.success) {
-                            startCooldown(60);
+                            let count = 60;
+                            const interval = setInterval(function() {
+                                count--;
+                                sendOtpBtn.querySelector('span').textContent = count > 0 ? `Resend (${count}s)` : 'Send Email Code';
+                                if (count <= 0) {
+                                    clearInterval(interval);
+                                    sendOtpBtn.disabled = false;
+                                }
+                            }, 1000);
                         } else {
                             sendOtpBtn.disabled = false;
-                            sendOtpBtn.querySelector('span').textContent = 'Send code';
+                            sendOtpBtn.querySelector('span').textContent = 'Send Email Code';
                         }
                     })
                     .catch(() => {
-                        feedback.hidden = false;
-                        feedback.textContent = 'Network error. Please try again.';
-                        feedback.className = 'otp-feedback error';
+                        feedback.style.display = 'block';
+                        feedback.textContent = 'Network error while dispatching code.';
+                        feedback.className = 'alert alert-danger border-0 rounded-3 py-2 small mt-2';
                         sendOtpBtn.disabled = false;
-                        sendOtpBtn.querySelector('span').textContent = 'Send code';
+                        sendOtpBtn.querySelector('span').textContent = 'Send Email Code';
                     });
             });
         });
     </script>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

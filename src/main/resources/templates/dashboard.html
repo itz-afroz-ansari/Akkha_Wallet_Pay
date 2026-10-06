@@ -3,503 +3,374 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PayWallet Hub</title>
+    <title>Dashboard - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" th:href="@{/css/style.css}">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
     <style>
-        :root {
-            --ink: #0f172a;
-            --muted: #7c8794;
-            --rule: #e7ebee;
-            --emerald: #0f7a4c;
-            --emerald-tint: #eaf5ef;
-            --blue: #2563eb;
-            --blue-tint: #eaf0ff;
-            --cyan: #0891b2;
-            --cyan-tint: #e5fafd;
-            --amber: #b45309;
-            --amber-tint: #fdf3e3;
+        .dashboard-container {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 32px 18px 60px;
         }
-
-        * { font-family: 'Inter', sans-serif; }
-
-        body {
-            background-color: #f3f7f5;
-            background-image: radial-gradient(circle at 8% 0%, rgba(15,122,76,.08), transparent 28rem);
-            color: var(--ink);
-            min-height: 100vh;
-        }
-
-        .max-w-lg { max-width: 1040px; margin: 0 auto; }
-
-        .brand-font { font-family: 'Manrope', sans-serif; }
-
-        /* Navbar */
-        .navbar {
-            background: rgba(255,255,255,.92) !important;
-            border-bottom: 1px solid var(--rule) !important;
-            box-shadow: 0 8px 30px rgba(15,23,42,.035) !important;
-            backdrop-filter: blur(14px);
-        }
-        .navbar-brand {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800 !important;
-            color: var(--ink) !important;
-            letter-spacing: -0.01em;
-        }
-        .navbar-brand i { color: var(--emerald); }
-        .menu-toggle-btn { color: var(--ink) !important; }
-
-        .avatar-circle {
-            background: var(--ink) !important;
-            font-family: 'Manrope', sans-serif;
-        }
-
-        .dropdown-toggle::after { display: none; }
-        .dropdown-menu {
-            border: 1px solid var(--rule) !important;
-            box-shadow: 0 20px 48px -16px rgba(15,23,42,0.18) !important;
-        }
-        .dropdown-item { color: var(--ink); }
-        .dropdown-item:hover { background: var(--emerald-tint); }
-        .dropdown-item i { color: var(--muted); }
-        .user-card-mini { background: #fbfcfd !important; }
-        .badge-verified {
-            background: var(--emerald-tint) !important;
-            color: var(--emerald) !important;
-            border-color: var(--emerald) !important;
-            font-weight: 600;
-            font-size: 0.7rem;
-        }
-
-        /* Sidebar */
-        .offcanvas-header {
-            border-bottom: 1px solid var(--rule) !important;
-        }
-        .offcanvas-title { font-family: 'Manrope', sans-serif; color: var(--ink) !important; }
-        .offcanvas-title i { color: var(--emerald); }
-        .sidebar-eyebrow { background: #fbfcfd !important; }
-        .sidebar-link {
-            color: var(--ink) !important;
-            transition: background-color 0.2s;
-        }
-        .sidebar-link:hover { background-color: var(--emerald-tint) !important; }
-        .sidebar-link.active {
-            background: var(--emerald-tint) !important;
-            color: var(--emerald) !important;
-        }
-        .sidebar-link.active i { color: var(--emerald) !important; }
-        .sidebar-footer { background: #fbfcfd !important; border-top: 1px solid var(--rule) !important; }
-
-        /* Alerts */
-        .alert { border-radius: 14px !important; }
-
-        /* Balance card — signature element */
-        .balance-card {
-            background: linear-gradient(135deg, #10281d 0%, #0b1f16 55%, #0a1a13 100%);
-            border-radius: 24px;
-            overflow: hidden;
+        .security-alert-box {
+            border-radius: 20px;
+            padding: 20px 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 24px;
             position: relative;
+            overflow: hidden;
+            border: 1px solid rgba(15, 122, 76, 0.15);
         }
-        .balance-card::after {
-            content: "";
-            position: absolute;
-            top: -60px; right: -60px;
-            width: 220px; height: 220px;
-            border-radius: 50%;
-            background: radial-gradient(circle, rgba(16,163,101,0.28) 0%, transparent 70%);
+        .security-alert-box.warning-state {
+            background: linear-gradient(135deg, #091f16 0%, #0d3826 60%, #0f5436 100%);
+            color: #ffffff;
+            box-shadow: 0 14px 30px -10px rgba(9, 31, 22, 0.35);
         }
-        .balance-label {
-            text-transform: uppercase;
-            letter-spacing: 0.14em;
-            font-size: 0.72rem;
-            font-weight: 700;
-            color: rgba(255,255,255,0.65);
+        .security-alert-box.ready-state {
+            background: #ffffff;
+            border-color: #d1fae5;
+            color: #0f172a;
+            box-shadow: var(--shadow-sm);
         }
-        .balance-figure {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-variant-numeric: tabular-nums;
-            letter-spacing: -0.02em;
-        }
-        .balance-toggle-btn { color: rgba(255,255,255,0.7) !important; }
-        .balance-toggle-btn:hover { color: #ffffff !important; }
-        .balance-phone {
-            color: rgba(255,255,255,0.65);
-        }
-
-        /* Quick actions */
-        .action-tile {
-            border-radius: 20px !important;
-            border: 1px solid var(--rule) !important;
-            box-shadow: 0 1px 2px rgba(15,23,42,0.03) !important;
-            transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-        }
-        .action-tile:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 40px -16px rgba(15,23,42,0.16) !important;
-        }
-        .action-icon-wrap {
-            width: 52px; height: 52px;
-            border-radius: 14px;
+        .stat-card-badge {
             display: inline-flex;
             align-items: center;
-            justify-content: center;
-        }
-        .action-icon-wrap.send { background: var(--blue-tint); }
-        .action-icon-wrap.send i { color: var(--blue); }
-        .action-icon-wrap.add { background: var(--emerald-tint); }
-        .action-icon-wrap.add i { color: var(--emerald); }
-        .action-icon-wrap.link { background: var(--cyan-tint); }
-        .action-icon-wrap.link i { color: var(--cyan); }
-        .action-icon-wrap.history { background: var(--amber-tint); }
-        .action-icon-wrap.history i { color: var(--amber); }
-        .action-label { color: var(--ink); font-family: 'Manrope', sans-serif; font-weight: 700; }
-
-        .section-eyebrow {
-            font-family: 'Manrope', sans-serif;
-            font-size: 0.72rem;
+            gap: 6px;
+            padding: 6px 14px;
+            background: rgba(255, 255, 255, 0.9);
+            border: 1px solid var(--border-subtle);
+            border-radius: 9999px;
+            font-size: 0.8rem;
             font-weight: 700;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            color: var(--muted);
-        }
-
-        .dashboard-wrap { padding-top: 34px; }
-        .welcome-row { display:flex; align-items:flex-end; justify-content:space-between; gap:18px; margin-bottom:24px; }
-        .welcome-kicker { color:var(--emerald); font-size:.7rem; font-weight:800; letter-spacing:.16em; text-transform:uppercase; }
-        .welcome-title { margin:.35rem 0 0; font:800 clamp(1.55rem,3vw,2.2rem)/1.15 'Manrope',sans-serif; letter-spacing:-.045em; }
-        .welcome-copy { color:var(--muted); margin:.45rem 0 0; }
-        .date-pill { border:1px solid var(--rule); background:rgba(255,255,255,.8); color:var(--muted); border-radius:999px; padding:10px 14px; font-size:.78rem; font-weight:700; white-space:nowrap; }
-        .security-banner {
-            display:flex; align-items:center; justify-content:space-between; gap:20px;
-            padding:20px 22px; margin-bottom:22px; border-radius:22px; color:#fff;
-            background:linear-gradient(115deg,#10271e 0%,#154b34 62%,#0d6a42 100%);
-            box-shadow:0 18px 42px rgba(10,73,47,.17); position:relative; overflow:hidden;
-        }
-        .security-banner::after { content:""; position:absolute; width:220px; height:220px; right:16%; top:-150px; border:1px solid rgba(255,255,255,.13); border-radius:50%; box-shadow:0 0 0 26px rgba(255,255,255,.035),0 0 0 54px rgba(255,255,255,.025); }
-        .security-banner-content { display:flex; align-items:center; gap:15px; position:relative; z-index:1; }
-        .security-banner-icon { width:48px; height:48px; flex:none; display:grid; place-items:center; border-radius:15px; background:rgba(255,255,255,.13); color:#bff2d3; font-size:1.35rem; }
-        .security-banner h2 { font:800 1rem 'Manrope',sans-serif; margin:0 0 4px; }
-        .security-banner p { color:rgba(255,255,255,.72); font-size:.84rem; margin:0; }
-        .security-banner .btn { position:relative; z-index:1; flex:none; border-radius:12px; padding:11px 15px; font-weight:800; }
-        .security-banner.is-ready { color:var(--ink); background:linear-gradient(120deg,#e2f5e9,#f3fbf6); border:1px solid #cde9d7; box-shadow:none; }
-        .security-banner.is-ready .security-banner-icon { color:var(--emerald); background:#d0eedb; }
-        .security-banner.is-ready p { color:#63756a; }
-        .security-banner.is-ready::after { border-color:rgba(15,122,76,.1); box-shadow:0 0 0 26px rgba(15,122,76,.035),0 0 0 54px rgba(15,122,76,.025); }
-        .balance-card { min-height:245px; }
-        .balance-card .card-body { padding:clamp(26px,5vw,48px)!important; }
-        .balance-card::before { content:""; position:absolute; width:280px; height:280px; right:16%; bottom:-205px; border:1px solid rgba(255,255,255,.12); border-radius:50%; box-shadow:0 0 0 28px rgba(255,255,255,.025),0 0 0 58px rgba(255,255,255,.02); }
-        .balance-card .position-relative { z-index:1; }
-        .section-heading { display:flex; justify-content:space-between; align-items:center; margin:30px 0 14px; }
-        .section-heading .section-eyebrow { margin:0; }
-        .section-hint { color:var(--muted); font-size:.78rem; }
-        .action-tile { min-height:145px; display:flex!important; flex-direction:column; align-items:center; justify-content:center; gap:4px; }
-        .action-icon-wrap { transition:transform .2s ease; }
-        .action-tile:hover .action-icon-wrap { transform:translateY(-3px) scale(1.04); }
-        .trust-strip { display:flex; align-items:center; gap:12px; margin-top:22px; padding:15px 18px; border:1px solid var(--rule); border-radius:16px; background:rgba(255,255,255,.76); color:var(--muted); font-size:.82rem; }
-        .trust-strip i { color:var(--emerald); font-size:1.1rem; }
-
-        @media (max-width: 575.98px) {
-            .dashboard-wrap { padding-top:22px; }
-            .welcome-row { align-items:flex-start; flex-direction:column; gap:11px; }
-            .security-banner { align-items:flex-start; flex-direction:column; padding:18px; }
-            .security-banner .btn { width:100%; }
-            .balance-card { min-height:210px; }
-            .action-tile { min-height:124px; padding:15px!important; }
+            color: var(--slate-700);
         }
     </style>
 </head>
 <body>
 
-    <!-- 1. MODERN NAVBAR -->
-    <nav class="navbar navbar-light bg-white sticky-top px-3 py-2">
-        <div class="container max-w-lg d-flex align-items-center justify-content-between">
-
-            <div class="d-flex align-items-center">
-                <button class="btn btn-link menu-toggle-btn p-0 me-3 border-0 text-decoration-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu">
-                    <i class="bi bi-list fs-1"></i>
+    <!-- Top Navigation Bar -->
+    <nav class="navbar navbar-expand-lg navbar-custom">
+        <div class="container-fluid max-w-lg px-md-3">
+            <div class="d-flex align-items-center gap-3">
+                <button class="btn btn-light border-0 p-2 d-flex align-items-center justify-content-center rounded-3 shadow-none" type="button" data-bs-toggle="offcanvas" data-bs-target="#sidebarMenu" aria-label="Toggle navigation menu">
+                    <i class="bi bi-list fs-3 text-dark"></i>
                 </button>
-                <a class="navbar-brand mb-0 h4 d-flex align-items-center" href="/dashboard">
-                    <i class="bi bi-wallet2 me-2"></i> Akhha Pay
+                <a class="brand-badge text-decoration-none" th:href="@{/dashboard}">
+                    <span class="brand-logo-icon"><i class="bi bi-wallet2"></i></span>
+                    <span class="d-none d-sm-inline">AKHHA PAY</span>
                 </a>
             </div>
 
-            <!-- Profile Dropdown -->
-            <div class="dropdown">
-                <a href="#" class="d-flex align-items-center text-dark text-decoration-none dropdown-toggle" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false">
-                    <div class="avatar-circle text-white rounded-circle d-flex justify-content-center align-items-center fw-bold shadow-sm" style="width: 42px; height: 42px; font-size: 1.2rem;">
-                        <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
+            <!-- Header Right Menu -->
+            <div class="d-flex align-items-center gap-2">
+                <div class="stat-card-badge d-none d-md-inline-flex">
+                    <i class="bi bi-trophy-fill text-warning"></i>
+                    <span><strong th:text="${user.rewardPoints != null ? user.rewardPoints : 0}">0</strong> Pts</span>
+                </div>
+
+                <!-- User Dropdown -->
+                <div class="dropdown">
+                    <div class="user-header-chip" id="profileDropdown" data-bs-toggle="dropdown" aria-expanded="false" role="button">
+                        <div class="avatar-initials">
+                            <span th:text="${user.name != null ? #strings.substring(user.name, 0, 1).toUpperCase() : 'U'}">U</span>
+                        </div>
+                        <span class="fw-bold small d-none d-sm-inline text-dark text-truncate" style="max-width: 120px;" th:text="${user.name}">User</span>
+                        <i class="bi bi-chevron-down small text-muted"></i>
                     </div>
-                </a>
-                <ul class="dropdown-menu dropdown-menu-end shadow-none mt-3 rounded-4 p-2" aria-labelledby="profileDropdown" style="min-width: 250px;">
-                    <li class="user-card-mini px-3 py-2 mb-2 rounded-3 mx-2 mt-1">
-                        <span class="fw-bold d-block text-dark text-truncate" th:text="${user.name}">User Name</span>
-                        <span class="small text-muted d-block text-truncate" th:text="${user.email}">user@email.com</span>
-                        <span class="badge badge-verified bg-opacity-10 border mt-2">Verified Account</span>
-                    </li>
-                    <li><a class="dropdown-item py-2 fw-semibold rounded-3" th:href="@{/dashboard/profile}">
-                        <i class="bi bi-person me-3 fs-5 align-middle"></i>My Profile</a></li>
-                    <li><a class="dropdown-item py-2 fw-semibold rounded-3" th:href="@{/dashboard/security}">
-                        <i class="bi bi-shield-lock me-3 fs-5 align-middle"></i>Security &amp; PIN</a></li>
-                    <li><a class="dropdown-item py-2 fw-semibold rounded-3" th:href="@{/dashboard/settings}">
-                        <i class="bi bi-gear me-3 fs-5 align-middle"></i>Settings</a></li>
-                    <li><hr class="dropdown-divider mx-2"></li>
-                    <li><a class="dropdown-item py-2 fw-bold text-danger rounded-3" href="/logout"><i class="bi bi-box-arrow-right me-3 fs-5 align-middle"></i>Sign Out</a></li>
-                </ul>
-            </div>
 
+                    <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0 mt-2 p-2 rounded-4" style="min-width: 250px;">
+                        <li class="p-3 bg-light rounded-3 mb-2 mx-1">
+                            <div class="fw-bold text-dark text-truncate" th:text="${user.name}">User Name</div>
+                            <div class="small text-muted text-truncate" th:text="${user.email}">user@email.com</div>
+                            <div class="mt-2">
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 font-monospace">
+                                    <i class="bi bi-shield-check me-1"></i>VERIFIED ACCOUNT
+                                </span>
+                            </div>
+                        </li>
+                        <li><a class="dropdown-item py-2 rounded-3 fw-semibold" th:href="@{/dashboard/profile}"><i class="bi bi-person me-2 text-muted"></i>Profile</a></li>
+                        <li><a class="dropdown-item py-2 rounded-3 fw-semibold" th:href="@{/dashboard/security}"><i class="bi bi-shield-lock me-2 text-muted"></i>Security &amp; PIN</a></li>
+                        <li><a class="dropdown-item py-2 rounded-3 fw-semibold" th:href="@{/dashboard/settings}"><i class="bi bi-gear me-2 text-muted"></i>Settings</a></li>
+                        <li><hr class="dropdown-divider my-1"></li>
+                        <li><a class="dropdown-item py-2 rounded-3 fw-bold text-danger" th:href="@{/logout}"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a></li>
+                    </ul>
+                </div>
+            </div>
         </div>
     </nav>
 
-    <!-- 2. OFFCANVAS SIDEBAR -->
-    <div class="offcanvas offcanvas-start border-0 shadow" tabindex="-1" id="sidebarMenu" style="width: 300px;">
-        <div class="offcanvas-header px-4 py-3">
-            <h5 class="offcanvas-title fw-bold d-flex align-items-center">
-                <i class="bi bi-wallet2 me-2 fs-4"></i>PayWallet Hub
-            </h5>
+    <!-- Offcanvas Navigation Sidebar -->
+    <div class="offcanvas offcanvas-start border-0 shadow-lg" tabindex="-1" id="sidebarMenu" style="width: 300px;">
+        <div class="offcanvas-header px-4 py-3 border-bottom">
+            <div class="d-flex align-items-center gap-2">
+                <span class="brand-logo-icon" style="width: 34px; height: 34px; font-size: 1rem;"><i class="bi bi-wallet2"></i></span>
+                <span class="fw-extrabold fs-5 brand-font">Akhha Pay Hub</span>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
         </div>
         <div class="offcanvas-body p-0 d-flex flex-column">
-            <div class="px-4 py-3 sidebar-eyebrow">
-                <p class="mb-0 section-eyebrow">Main Menu</p>
+            <div class="p-3">
+                <div class="text-uppercase text-muted fw-bold px-3 py-1" style="font-size: 0.68rem; letter-spacing: 0.12em;">Navigation</div>
+                <ul class="nav flex-column gap-1 mt-1">
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard}" class="nav-link px-3 py-2 rounded-3 fw-bold bg-success-subtle text-success">
+                            <i class="bi bi-house-door-fill me-3"></i>Dashboard
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/history}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-receipt me-3 text-muted"></i>Passbook History
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/requests}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-arrow-left-right me-3 text-muted"></i>Payment Requests
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/services}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-receipt-cutoff me-3 text-muted"></i>Bill Payments &amp; Utilities
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/savings}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-bullseye me-3 text-muted"></i>Savings Goals
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/finance}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-graph-up-arrow me-3 text-muted"></i>Finance Insights &amp; Rewards
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/my-qr}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-qr-code me-3 text-muted"></i>My QR Code
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/banks}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-bank me-3 text-muted"></i>Linked Bank Accounts
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a th:href="@{/dashboard/kyc}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-dark hover-lift">
+                            <i class="bi bi-person-check me-3 text-muted"></i>KYC Verification
+                        </a>
+                    </li>
+                    <li class="nav-item" th:if="${user.role == 'ADMIN'}">
+                        <a th:href="@{/dashboard/admin}" class="nav-link px-3 py-2 rounded-3 fw-semibold text-danger hover-lift">
+                            <i class="bi bi-speedometer2 me-3 text-danger"></i>Admin Management
+                        </a>
+                    </li>
+                </ul>
             </div>
-            <ul class="nav flex-column px-3 py-2 mb-auto mt-2">
-                <li class="nav-item mb-1">
-                    <a href="/dashboard" class="nav-link sidebar-link active rounded-3 fw-bold px-4 py-3">
-                        <i class="bi bi-house-door-fill me-3 fs-5 align-middle"></i> Dashboard
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/history" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-receipt me-3 fs-5 align-middle text-secondary"></i> View Passbook
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/requests" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-arrow-left-right me-3 fs-5 align-middle text-secondary"></i> Payment Requests
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/services" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-receipt-cutoff me-3 fs-5 align-middle text-secondary"></i> Recharge &amp; Bills
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/savings" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-bullseye me-3 fs-5 align-middle text-secondary"></i> Savings Goals
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/finance" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-graph-up-arrow me-3 fs-5 align-middle text-secondary"></i> Finance &amp; Rewards
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/my-qr" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-qr-code me-3 fs-5 align-middle text-secondary"></i> Receive by QR
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/merchant" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-shop me-3 fs-5 align-middle text-secondary"></i> Merchant space
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/kyc" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-person-check me-3 fs-5 align-middle text-secondary"></i> Demo verification
-                    </a>
-                </li>
-                <li class="nav-item mb-1" th:if="${user.role == 'ADMIN'}">
-                    <a href="/dashboard/admin" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-speedometer2 me-3 fs-5 align-middle text-secondary"></i> Admin console
-                    </a>
-                </li>
-                <li class="nav-item mb-1">
-                    <a href="/dashboard/banks" class="nav-link sidebar-link rounded-3 fw-semibold px-4 py-3">
-                        <i class="bi bi-bank me-3 fs-5 align-middle text-secondary"></i> Bank Accounts
-                    </a>
-                </li>
-            </ul>
-            <div class="p-4 sidebar-footer mt-auto">
-                <a href="/logout" class="btn btn-outline-danger w-100 fw-bold py-2"><i class="bi bi-box-arrow-right me-2"></i>Sign Out</a>
+            <div class="mt-auto p-4 border-top">
+                <a th:href="@{/logout}" class="btn btn-outline-danger w-100 fw-bold py-2 rounded-3">
+                    <i class="bi bi-box-arrow-right me-2"></i>Sign Out
+                </a>
             </div>
         </div>
     </div>
 
-    <!-- 3. MAIN DASHBOARD CONTENT -->
-    <main class="container dashboard-wrap max-w-lg mb-5">
+    <!-- Main Dashboard Container -->
+    <main class="dashboard-container">
 
-        <div class="welcome-row">
+        <!-- Welcome Banner Header -->
+        <div class="d-flex flex-column flex-md-row justify-content-between align-items-start align-items-md-center gap-2 mb-4">
             <div>
-                <div class="welcome-kicker">Your money, in motion</div>
-                <h1 class="welcome-title">Welcome back, <span th:text="${user.name}">there</span></h1>
-                <p class="welcome-copy">Here’s a clear view of your wallet today.</p>
+                <div class="text-uppercase fw-bold text-success" style="font-size: 0.72rem; letter-spacing: 0.14em;">DIGITAL WALLET ENGINE</div>
+                <h1 class="h2 fw-extrabold mb-1">Welcome back, <span th:text="${user.name}">User</span></h1>
+                <p class="text-muted mb-0 small">Here is your digital wallet portfolio overview.</p>
             </div>
-            <div class="date-pill"><i class="bi bi-calendar3 me-2"></i><span id="todayLabel">Today</span></div>
+            <div class="stat-card-badge shadow-sm">
+                <i class="bi bi-calendar3 text-muted"></i>
+                <span id="todayDateLabel">Today</span>
+            </div>
         </div>
 
-        <section th:if="${user.pin == null || user.pin.isEmpty()}" class="security-banner" aria-labelledby="mpinSetupTitle">
-            <div class="security-banner-content">
-                <div class="security-banner-icon"><i class="bi bi-shield-lock-fill"></i></div>
-                <div>
-                    <h2 id="mpinSetupTitle">One quick step to secure your wallet</h2>
-                    <p>Create a 4-digit MPIN. We’ll email a verification code to your registered address.</p>
-                </div>
+        <!-- Global Alerts -->
+        <div th:if="${txSuccess}" class="alert alert-success alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-check-circle-fill fs-5 text-success"></i>
+                <span class="fw-semibold" th:text="${txSuccess}"></span>
             </div>
-            <a href="/dashboard/security" class="btn btn-light text-success">Set up MPIN <i class="bi bi-arrow-right ms-1"></i></a>
-        </section>
-        <section th:unless="${user.pin == null || user.pin.isEmpty()}" class="security-banner is-ready" aria-label="MPIN security status">
-            <div class="security-banner-content">
-                <div class="security-banner-icon"><i class="bi bi-shield-check"></i></div>
-                <div>
-                    <h2>Your wallet is protected</h2>
-                    <p>Your MPIN is active for wallet transfers.</p>
-                </div>
-            </div>
-            <a href="/dashboard/security" class="btn btn-outline-success">Manage security</a>
-        </section>
-
-        <div th:if="${txSuccess}" class="alert alert-success alert-dismissible fade show shadow-sm border-0 border-start border-success border-4" role="alert">
-            <i class="bi bi-check-circle-fill me-2 text-success"></i><span th:text="${txSuccess}" class="fw-semibold"></span>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
-        <div th:if="${txError}" class="alert alert-danger alert-dismissible fade show shadow-sm border-0 border-start border-danger border-4" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2 text-danger"></i><span th:text="${txError}" class="fw-semibold"></span>
+        <div th:if="${txError}" class="alert alert-danger alert-dismissible fade show border-0 rounded-4 shadow-sm mb-4" role="alert">
+            <div class="d-flex align-items-center gap-2">
+                <i class="bi bi-exclamation-triangle-fill fs-5 text-danger"></i>
+                <span class="fw-semibold" th:text="${txError}"></span>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         </div>
 
-        <!-- Premium Balance Card -->
-        <div class="card balance-card text-white border-0 shadow-lg mb-4">
-            <div class="card-body p-5 position-relative">
-                <div class="position-absolute top-0 end-0 p-4 opacity-25">
-                    <i class="bi bi-wallet2 display-1"></i>
+        <!-- MPIN Security Alert Banner -->
+        <div th:if="${user.pin == null || user.pin.isEmpty()}" class="security-alert-box warning-state">
+            <div class="d-flex align-items-center gap-3">
+                <div class="rounded-circle p-2 bg-white bg-opacity-10 fs-3 text-warning">
+                    <i class="bi bi-shield-exclamation"></i>
                 </div>
+                <div>
+                    <h5 class="fw-bold mb-1 text-white">Protect your transactions with an MPIN</h5>
+                    <p class="mb-0 text-white-50 small">Create a 4-digit security PIN to authorize fast transfers and balance withdrawals.</p>
+                </div>
+            </div>
+            <a th:href="@{/dashboard/security}" class="btn btn-light fw-bold text-success px-4 py-2 rounded-3 text-nowrap">
+                Set MPIN <i class="bi bi-arrow-right ms-1"></i>
+            </a>
+        </div>
 
-                <div class="d-flex align-items-center mb-2">
-                    <p class="balance-label mb-0 me-3">Available Balance</p>
-                    <button id="toggleBalanceBtn" class="btn btn-link balance-toggle-btn p-0 text-decoration-none" title="Show/Hide Balance">
-                        <i id="toggleIcon" class="bi bi-eye-slash-fill fs-5"></i>
+        <!-- Signature Virtual Wallet Card -->
+        <div class="wallet-card-hero mb-4">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="emv-chip"></div>
+                    <i class="bi bi-wifi card-contactless"></i>
+                </div>
+                <div class="balance-pill-badge">
+                    <i class="bi bi-shield-check me-1"></i> ACTIVE WALLET
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="d-flex align-items-center gap-2 mb-1">
+                    <span class="text-uppercase fw-bold text-white-50" style="font-size: 0.75rem; letter-spacing: 0.12em;">Available Wallet Balance</span>
+                    <button id="toggleBalanceBtn" class="btn btn-link text-white-50 p-0 text-decoration-none" title="Toggle balance view">
+                        <i id="toggleIcon" class="bi bi-eye-slash-fill fs-5 text-white"></i>
                     </button>
                 </div>
+                <div class="balance-amount-display text-white" id="walletBalance" th:data-balance="${wallet.balance}">••••••••</div>
+            </div>
 
-                <h1 class="display-4 balance-figure mb-0 text-white" id="walletBalance" th:data-balance="${wallet.balance}">••••••••</h1>
-                <p class="mt-4 mb-0 balance-phone small fw-semibold">
-                    <i class="bi bi-upc-scan me-1"></i> Mobile No. : <span th:text="${user.phoneNumber}">9876543210</span>
-                </p>
+            <div class="d-flex justify-content-between align-items-end pt-3 border-top border-white border-opacity-10">
+                <div>
+                    <div class="text-uppercase text-white-50 fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.1em;">Cardholder / Mobile</div>
+                    <div class="fw-bold text-white fs-6">
+                        <span th:text="${user.name}">Account Holder</span> · <span th:text="${user.phoneNumber}">+91 9876543210</span>
+                    </div>
+                </div>
+                <div class="text-end">
+                    <div class="text-uppercase text-white-50 fw-semibold" style="font-size: 0.68rem; letter-spacing: 0.1em;">Network</div>
+                    <div class="fw-extrabold text-white font-monospace fs-5">AKHHA PAY</div>
+                </div>
             </div>
         </div>
 
-        <div class="section-heading">
-            <p class="section-eyebrow">Quick actions</p>
-            <span class="section-hint">The things you do most</span>
+        <!-- Quick Actions Header -->
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-4">
+            <h5 class="fw-bold mb-0 text-dark">Quick Services &amp; Actions</h5>
+            <span class="text-muted small">Instant operations</span>
         </div>
 
-        <!-- Quick Actions Grid -->
-        <div class="row g-3 mb-4">
+        <!-- Quick Action Grid -->
+        <div class="row g-3 mb-5">
             <!-- 1. Send Money -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/send-money" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap send d-inline-flex mb-2">
-                        <i class="bi bi-send-fill fs-4"></i>
+                <a th:href="@{/dashboard/send-money}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-blue"><i class="bi bi-send-fill"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Send Money</h6>
+                        <span class="quick-action-sub">Transfer to phone/email</span>
                     </div>
-                    <div class="action-label small">Send<br>Money</div>
                 </a>
             </div>
 
             <!-- 2. Add Funds -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/add-funds" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap add d-inline-flex mb-2">
-                        <i class="bi bi-plus-circle-fill fs-4"></i>
+                <a th:href="@{/dashboard/add-funds}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-emerald"><i class="bi bi-plus-circle-fill"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Add Funds</h6>
+                        <span class="quick-action-sub">Top up via card</span>
                     </div>
-                    <div class="action-label small">Add<br>Funds</div>
                 </a>
             </div>
 
-            <!-- 3. Link Bank -->
+            <!-- 3. Scan & Pay -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/link-bank" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap link d-inline-flex mb-2">
-                        <i class="bi bi-bank2 fs-4"></i>
+                <a th:href="@{/dashboard/scan-pay}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-cyan"><i class="bi bi-qr-code-scan"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Scan &amp; Pay</h6>
+                        <span class="quick-action-sub">Instant QR Scanner</span>
                     </div>
-                    <div class="action-label small">Link<br>Bank</div>
                 </a>
             </div>
 
-            <!-- 4. Passbook History -->
+            <!-- 4. My QR Code -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/history" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap history d-inline-flex mb-2">
-                        <i class="bi bi-clock-history fs-4"></i>
+                <a th:href="@{/dashboard/my-qr}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-purple"><i class="bi bi-qr-code"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">My QR Code</h6>
+                        <span class="quick-action-sub">Receive payments</span>
                     </div>
-                    <div class="action-label small">Passbook<br>History</div>
                 </a>
             </div>
 
+            <!-- 5. Passbook History -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/requests" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap send d-inline-flex mb-2">
-                        <i class="bi bi-arrow-left-right fs-4"></i>
+                <a th:href="@{/dashboard/history}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-amber"><i class="bi bi-receipt"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Passbook</h6>
+                        <span class="quick-action-sub">Statement &amp; history</span>
                     </div>
-                    <div class="action-label small">Request<br>Money</div>
                 </a>
             </div>
 
+            <!-- 6. Payment Requests -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/services" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap add d-inline-flex mb-2">
-                        <i class="bi bi-lightning-charge-fill fs-4"></i>
+                <a th:href="@{/dashboard/requests}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-rose"><i class="bi bi-arrow-left-right"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Payment Requests</h6>
+                        <span class="quick-action-sub">Request from friends</span>
                     </div>
-                    <div class="action-label small">Recharge<br>&amp; Bills</div>
                 </a>
             </div>
 
+            <!-- 7. Bills & Recharge -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/savings" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap history d-inline-flex mb-2">
-                        <i class="bi bi-bullseye fs-4"></i>
+                <a th:href="@{/dashboard/services}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-emerald"><i class="bi bi-lightning-charge-fill"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Bills &amp; Utilities</h6>
+                        <span class="quick-action-sub">Recharge, power, gas</span>
                     </div>
-                    <div class="action-label small">Savings<br>Goals</div>
                 </a>
             </div>
 
+            <!-- 8. Savings Goals -->
             <div class="col-6 col-md-3">
-                <a href="/dashboard/finance" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap link d-inline-flex mb-2">
-                        <i class="bi bi-graph-up-arrow fs-4"></i>
+                <a th:href="@{/dashboard/savings}" class="quick-action-tile">
+                    <div class="quick-action-icon icon-blue"><i class="bi bi-bullseye"></i></div>
+                    <div>
+                        <h6 class="quick-action-title">Savings Goals</h6>
+                        <span class="quick-action-sub">Lock funds &amp; save</span>
                     </div>
-                    <div class="action-label small">Finance<br>Overview</div>
-                </a>
-            </div>
-
-            <div class="col-6 col-md-3">
-                <a href="/dashboard/my-qr" class="btn bg-white action-tile w-100 p-4 text-center h-100 text-decoration-none d-block">
-                    <div class="action-icon-wrap send d-inline-flex mb-2">
-                        <i class="bi bi-qr-code fs-4"></i>
-                    </div>
-                    <div class="action-label small">Receive<br>by QR</div>
                 </a>
             </div>
         </div>
-
-        <div class="trust-strip"><i class="bi bi-lock-fill"></i><span>Your balance stays private. Use the eye icon whenever you want to reveal it.</span></div>
 
     </main>
 
     <!-- Bootstrap Bundle JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
-    <!-- Custom Balance Masking Logic -->
+    <!-- Interactive Balance Toggle Script -->
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             const balanceElement = document.getElementById('walletBalance');
             const toggleButton = document.getElementById('toggleBalanceBtn');
             const toggleIcon = document.getElementById('toggleIcon');
-            const todayLabel = document.getElementById('todayLabel');
+            const todayLabel = document.getElementById('todayDateLabel');
 
             if (todayLabel) {
                 todayLabel.textContent = new Intl.DateTimeFormat('en-IN', {
@@ -507,7 +378,9 @@
                 }).format(new Date());
             }
 
-            const trueBalance = '₹' + balanceElement.getAttribute('data-balance');
+            const rawBal = balanceElement.getAttribute('data-balance');
+            const num = parseFloat(rawBal) || 0;
+            const trueBalance = '₹' + num.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
             const maskedBalance = "••••••••";
 
             let isHidden = true;
@@ -515,11 +388,11 @@
             toggleButton.addEventListener('click', function () {
                 if (isHidden) {
                     balanceElement.textContent = trueBalance;
-                    toggleIcon.className = "bi bi-eye-fill fs-5";
+                    toggleIcon.className = "bi bi-eye-fill fs-5 text-white";
                     isHidden = false;
                 } else {
                     balanceElement.textContent = maskedBalance;
-                    toggleIcon.className = "bi bi-eye-slash-fill fs-5";
+                    toggleIcon.className = "bi bi-eye-slash-fill fs-5 text-white-50";
                     isHidden = true;
                 }
             });

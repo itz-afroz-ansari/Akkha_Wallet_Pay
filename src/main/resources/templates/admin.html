@@ -1,21 +1,169 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org"><head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Admin console - Akhha Pay</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"><link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet"><link rel="preconnect" href="https://fonts.googleapis.com"><link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    <style>:root{--ink:#10271e;--green:#0f7a4c;--muted:#78857d;--line:#e5ebe7}*{box-sizing:border-box}body{background:#f5f8f6;color:var(--ink);font-family:Inter,sans-serif;min-height:100vh}.wrap{width:min(1160px,calc(100% - 32px));margin:auto;padding:30px 0 60px}.top{display:flex;justify-content:space-between;margin-bottom:24px}.top a{color:var(--muted);font-size:.73rem;font-weight:800;letter-spacing:.1em;text-decoration:none}.brand{color:var(--green)!important;font:800 1rem Manrope,sans-serif!important;letter-spacing:0!important}.hero{padding:26px 29px;border-radius:22px;color:#fff;background:linear-gradient(120deg,#10271e,#1d4433);margin-bottom:17px}.hero small{color:#b4dec5;text-transform:uppercase;letter-spacing:.15em;font-size:.68rem;font-weight:800}.hero h1{font:800 clamp(1.6rem,4vw,2.1rem) Manrope,sans-serif;margin:8px 0}.hero p{margin:0;color:#d5e5dc}.metrics{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}.metric,.card{background:#fff;border:1px solid var(--line);border-radius:17px;padding:18px;box-shadow:0 8px 25px rgba(20,52,36,.03)}.metric span{display:block;color:var(--muted);font-size:.63rem;text-transform:uppercase;letter-spacing:.08em;font-weight:800}.metric strong{display:block;font:800 1.35rem Manrope,sans-serif;margin-top:8px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}.card h2{font:800 .98rem Manrope,sans-serif;margin:0}.sub{font-size:.75rem;color:var(--muted);margin:6px 0 15px}.item{display:flex;justify-content:space-between;gap:12px;padding:12px 0;border-top:1px solid var(--line);font-size:.8rem}.item strong{font-weight:800}.actions{display:flex;gap:7px}.actions button{border-radius:8px;font-size:.72rem;font-weight:800}.audit{max-height:310px;overflow:auto}.audit .item{font-size:.72rem}.empty{text-align:center;color:var(--muted);padding:20px;font-size:.8rem}.pill{color:var(--green);background:#eaf5ef;border-radius:999px;font-size:.65rem;font-weight:800;padding:5px 8px}@media(max-width:880px){.metrics{grid-template-columns:repeat(3,1fr)}}@media(max-width:650px){.grid{grid-template-columns:1fr}.metrics{grid-template-columns:repeat(2,1fr)}.wrap{width:calc(100% - 22px);padding-top:18px}}</style>
-</head><body><main class="wrap">
-    <div class="top"><a th:href="@{/dashboard}">&larr; DASHBOARD</a><a class="brand" th:href="@{/dashboard}">Akhha Pay · Admin</a></div>
-    <header class="hero"><small>Restricted workspace</small><h1>Admin console</h1><p>Review demo verification, merchant applications, and recent audit activity.</p></header>
-    <div th:if="${txSuccess}" class="alert alert-success border-0" th:text="${txSuccess}"></div><div th:if="${txError}" class="alert alert-danger border-0" th:text="${txError}"></div>
-    <section class="metrics"><div class="metric"><span>Customers</span><strong th:text="${totalUsers}">0</strong></div><div class="metric"><span>Merchants</span><strong th:text="${totalMerchants}">0</strong></div><div class="metric"><span>Transactions</span><strong th:text="${totalTransactions}">0</strong></div><div class="metric"><span>Failed tx</span><strong th:text="${failedTransactions}">0</strong></div><div class="metric"><span>Pending requests</span><strong th:text="${pendingRequests}">0</strong></div></section>
-    <div class="grid">
-        <section class="card"><h2>Verification queue <span class="pill" th:text="${pendingKyc.size()}">0</span></h2><p class="sub">Demo KYC contains no identity documents.</p><div th:if="${pendingKyc.isEmpty()}" class="empty">No verification requests waiting.</div>
-            <div th:each="customer : ${pendingKyc}" class="item align-items-center"><div><strong th:text="${customer.name}">Customer</strong><div class="sub mb-0" th:text="${customer.email}">email</div></div><div class="actions"><form th:action="@{/dashboard/admin/kyc/{id}(id=${customer.id})}" method="post"><input type="hidden" name="action" value="APPROVE"><button class="btn btn-success btn-sm" type="submit">Approve</button></form><form th:action="@{/dashboard/admin/kyc/{id}(id=${customer.id})}" method="post"><input type="hidden" name="action" value="REJECT"><button class="btn btn-outline-secondary btn-sm" type="submit">Reject</button></form></div></div>
-        </section>
-        <section class="card"><h2>Merchant applications <span class="pill" th:text="${pendingMerchants.size()}">0</span></h2><p class="sub">Approve demo storefronts and merchant QR profiles.</p><div th:if="${pendingMerchants.isEmpty()}" class="empty">No merchant profiles waiting.</div>
-            <div th:each="merchant : ${pendingMerchants}" class="item align-items-center"><div><strong th:text="${merchant.businessName}">Business</strong><div class="sub mb-0" th:text="${merchant.category + ' · ' + merchant.user.email}">Category · email</div></div><div class="actions"><form th:action="@{/dashboard/admin/merchant/{id}(id=${merchant.id})}" method="post"><input type="hidden" name="action" value="APPROVE"><button class="btn btn-success btn-sm" type="submit">Approve</button></form><form th:action="@{/dashboard/admin/merchant/{id}(id=${merchant.id})}" method="post"><input type="hidden" name="action" value="REJECT"><button class="btn btn-outline-secondary btn-sm" type="submit">Reject</button></form></div></div>
-        </section>
-        <section class="card grid-span"><h2>Audit trail</h2><p class="sub">Latest security and money movement events.</p><div class="audit"><div th:if="${auditLogs.isEmpty()}" class="empty">No audit events recorded.</div><div th:each="event : ${auditLogs}" class="item"><div><strong th:text="${event.action}">ACTION</strong><div class="sub mb-0" th:text="${event.entityType + ' · ' + event.details}">Entity · details</div></div><div class="sub mb-0" th:text="${#temporals.format(event.createdAt, 'dd MMM HH:mm')}">Date</div></div></div></section>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Admin Console - Akhha Pay</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .page-wrap {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 36px 18px 60px;
+        }
+        .admin-stat-card {
+            background: #ffffff;
+            border: 1px solid var(--border-subtle);
+            border-radius: var(--radius-md);
+            padding: 18px;
+            box-shadow: var(--shadow-sm);
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrap">
+        <a th:href="@{/dashboard}" class="btn-outline-custom mb-4 py-2 px-3 fw-bold small">
+            <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <div>
+                <span class="text-uppercase fw-bold text-danger" style="font-size: 0.68rem; letter-spacing: 0.14em;">SYSTEM ADMINISTRATION</span>
+                <h2 class="fw-extrabold mb-0">Admin Management Console</h2>
+            </div>
+            <div class="quick-action-icon icon-rose" style="width:48px; height:48px; font-size:1.3rem;">
+                <i class="bi bi-speedometer2"></i>
+            </div>
+        </div>
+
+        <!-- Global Alerts -->
+        <div th:if="${txSuccess}" class="alert alert-success border-0 rounded-4 shadow-sm mb-4" th:text="${txSuccess}"></div>
+        <div th:if="${txError}" class="alert alert-danger border-0 rounded-4 shadow-sm mb-4" th:text="${txError}"></div>
+
+        <!-- 5 System Metrics -->
+        <div class="row g-3 mb-4">
+            <div class="col">
+                <div class="admin-stat-card">
+                    <span class="text-uppercase text-muted fw-bold small" style="font-size:0.65rem;">CUSTOMERS</span>
+                    <h4 class="fw-extrabold text-dark mt-2 mb-0" th:text="${totalUsers}">0</h4>
+                </div>
+            </div>
+            <div class="col">
+                <div class="admin-stat-card">
+                    <span class="text-uppercase text-muted fw-bold small" style="font-size:0.65rem;">MERCHANTS</span>
+                    <h4 class="fw-extrabold text-primary mt-2 mb-0" th:text="${totalMerchants}">0</h4>
+                </div>
+            </div>
+            <div class="col">
+                <div class="admin-stat-card">
+                    <span class="text-uppercase text-muted fw-bold small" style="font-size:0.65rem;">TOTAL TX</span>
+                    <h4 class="fw-extrabold text-success mt-2 mb-0" th:text="${totalTransactions}">0</h4>
+                </div>
+            </div>
+            <div class="col">
+                <div class="admin-stat-card">
+                    <span class="text-uppercase text-muted fw-bold small" style="font-size:0.65rem;">FAILED TX</span>
+                    <h4 class="fw-extrabold text-danger mt-2 mb-0" th:text="${failedTransactions}">0</h4>
+                </div>
+            </div>
+            <div class="col">
+                <div class="admin-stat-card">
+                    <span class="text-uppercase text-muted fw-bold small" style="font-size:0.65rem;">PENDING REQ</span>
+                    <h4 class="fw-extrabold text-warning mt-2 mb-0" th:text="${pendingRequests}">0</h4>
+                </div>
+            </div>
+        </div>
+
+        <div class="row g-4 mb-4">
+            <!-- KYC Review Queue -->
+            <div class="col-lg-6">
+                <div class="card-modern shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">KYC Approval Queue</h5>
+                        <span class="status-badge pending" th:text="${pendingKyc.size() + ' Pending'}">0 Pending</span>
+                    </div>
+
+                    <div th:if="${pendingKyc.isEmpty()}" class="text-center py-4 bg-light rounded-4">
+                        <i class="bi bi-person-check fs-3 text-muted"></i>
+                        <p class="text-muted small mb-0 mt-1">No pending verification requests.</p>
+                    </div>
+
+                    <div th:unless="${pendingKyc.isEmpty()}" class="d-grid gap-2">
+                        <div th:each="customer : ${pendingKyc}" class="p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark" th:text="${customer.name}">Customer Name</div>
+                                <div class="text-muted small" th:text="${customer.email}">email@example.com</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form th:action="@{/dashboard/admin/kyc/{id}(id=${customer.id})}" method="post">
+                                    <input type="hidden" name="action" value="APPROVE">
+                                    <button class="btn btn-sm btn-emerald" type="submit">Approve</button>
+                                </form>
+                                <form th:action="@{/dashboard/admin/kyc/{id}(id=${customer.id})}" method="post">
+                                    <input type="hidden" name="action" value="REJECT">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Merchant Applications Queue -->
+            <div class="col-lg-6">
+                <div class="card-modern shadow-sm h-100">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold mb-0">Merchant Applications</h5>
+                        <span class="status-badge pending" th:text="${pendingMerchants.size() + ' Pending'}">0 Pending</span>
+                    </div>
+
+                    <div th:if="${pendingMerchants.isEmpty()}" class="text-center py-4 bg-light rounded-4">
+                        <i class="bi bi-shop fs-3 text-muted"></i>
+                        <p class="text-muted small mb-0 mt-1">No pending merchant applications.</p>
+                    </div>
+
+                    <div th:unless="${pendingMerchants.isEmpty()}" class="d-grid gap-2">
+                        <div th:each="m : ${pendingMerchants}" class="p-3 bg-light rounded-4 border d-flex justify-content-between align-items-center">
+                            <div>
+                                <div class="fw-bold text-dark" th:text="${m.businessName}">Business Name</div>
+                                <div class="text-muted small" th:text="${m.category + ' · ' + m.user.email}">Category · Email</div>
+                            </div>
+                            <div class="d-flex gap-2">
+                                <form th:action="@{/dashboard/admin/merchant/{id}(id=${m.id})}" method="post">
+                                    <input type="hidden" name="action" value="APPROVE">
+                                    <button class="btn btn-sm btn-emerald" type="submit">Approve</button>
+                                </form>
+                                <form th:action="@{/dashboard/admin/merchant/{id}(id=${m.id})}" method="post">
+                                    <input type="hidden" name="action" value="REJECT">
+                                    <button class="btn btn-sm btn-outline-danger" type="submit">Reject</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Audit Trail -->
+        <div class="card-modern shadow-sm">
+            <h5 class="fw-bold mb-3">System Audit Trail</h5>
+            <div th:if="${auditLogs.isEmpty()}" class="text-center py-4 bg-light rounded-4">
+                <p class="text-muted small mb-0">No audit trail records.</p>
+            </div>
+            <div th:unless="${auditLogs.isEmpty()}" class="d-grid gap-2" style="max-height: 360px; overflow-y: auto;">
+                <div th:each="event : ${auditLogs}" class="tx-item py-2">
+                    <div>
+                        <span class="badge bg-dark text-white font-monospace" th:text="${event.action}">ACTION</span>
+                        <span class="small text-muted ms-2" th:text="${event.entityType + ' · ' + event.details}">Details</span>
+                    </div>
+                    <span class="small text-muted" th:text="${#temporals.format(event.createdAt, 'dd MMM yyyy, HH:mm')}">Date</span>
+                </div>
+            </div>
+        </div>
     </div>
-    <p class="sub mt-3">Admin access is granted only to the account configured by <code>PAYWALLET_ADMIN_EMAIL</code>. All provider and KYC actions shown here are simulated.</p>
-</main></body></html>
+</body>
+</html>

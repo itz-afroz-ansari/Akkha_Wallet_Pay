@@ -3,224 +3,94 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>PayWallet Authorization Login</title>
-    <!-- Bootstrap grid used for layout, but custom CSS handles the styling -->
+    <title>Sign In - Akhha Pay</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
-    
-    <style>
-        :root {
-            --ink: #0f2a1f;
-            --paper: #ffffff;
-            --rule: #e6e9e7;
-            --emerald: #0f7a4c;
-            --emerald-deep: #0b5c3a;
-            --emerald-tint: #eaf5ef;
-            --muted: #7c877f;
-            --danger: #d93025;
-            --danger-tint: #fce8e6;
-        }
-
-        * { box-sizing: border-box; }
-
-        /* Subtle off-white/green tinted background so the white card pops */
-        body {
-            background: #f8faf9;
-            font-family: 'Inter', sans-serif;
-            color: var(--ink);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .auth-wrapper {
-            width: 100%;
-            max-width: 420px;
-            padding: 24px;
-        }
-
-        .card-auth {
-            background: var(--paper);
-            border-radius: 24px;
-            padding: 48px 40px;
-            box-shadow: 0 1px 3px rgba(15,42,31,0.05), 0 24px 56px -20px rgba(15,42,31,0.14);
-            position: relative;
-            overflow: hidden;
-        }
-
-        /* Signature top gradient bar */
-        .card-auth::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0;
-            height: 5px;
-            background: linear-gradient(90deg, var(--emerald) 0%, #4fa87f 60%, var(--emerald) 100%);
-        }
-
-        .brand-logo {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-size: 1.2rem;
-            color: var(--emerald);
-            text-align: center;
-            margin-bottom: 24px;
-            letter-spacing: -0.02em;
-        }
-
-        h2.title {
-            font-family: 'Manrope', sans-serif;
-            font-weight: 800;
-            font-size: 1.8rem;
-            color: var(--ink);
-            text-align: center;
-            margin-bottom: 8px;
-            letter-spacing: -0.03em;
-        }
-
-        .subtitle {
-            text-align: center;
-            font-size: 0.9rem;
-            color: var(--muted);
-            margin-bottom: 36px;
-        }
-
-        /* Custom minimal alerts */
-        .alert-custom {
-            border-radius: 12px;
-            padding: 14px 16px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            text-align: center;
-            margin-bottom: 24px;
-            border: none;
-        }
-        .alert-error {
-            background: var(--danger-tint);
-            color: #a51d14;
-        }
-        .alert-success-custom {
-            background: var(--emerald-tint);
-            color: var(--emerald-deep);
-        }
-
-        .field-group { margin-bottom: 22px; }
-
-        .field-label {
-            font-size: 0.7rem;
-            font-weight: 700;
-            color: var(--muted);
-            text-transform: uppercase;
-            letter-spacing: 0.12em;
-            margin-bottom: 8px;
-            display: block;
-        }
-
-        .custom-input {
-            width: 100%;
-            background: #fbfcfb;
-            border: 1px solid var(--rule);
-            border-radius: 12px;
-            padding: 14px 16px;
-            font-size: 0.95rem;
-            color: var(--ink);
-            transition: all 0.2s ease;
-        }
-        .custom-input:focus {
-            outline: none;
-            background: var(--paper);
-            border-color: var(--emerald);
-            box-shadow: 0 0 0 4px rgba(15, 122, 76, 0.1);
-        }
-        .custom-input::placeholder { color: #b7c0ba; }
-
-        .btn-auth {
-            width: 100%;
-            background: var(--ink);
-            color: #fff;
-            border: none;
-            border-radius: 12px;
-            padding: 16px;
-            font-family: 'Manrope', sans-serif;
-            font-weight: 700;
-            font-size: 0.95rem;
-            letter-spacing: 0.01em;
-            margin-top: 12px;
-            transition: background 0.25s ease, transform 0.15s ease;
-        }
-        .btn-auth:hover {
-            background: var(--emerald-deep);
-            transform: translateY(-1px);
-        }
-        .btn-auth:active { transform: translateY(0); }
-
-        .auth-footer {
-            text-align: center;
-            margin-top: 28px;
-            font-size: 0.9rem;
-            color: var(--muted);
-        }
-        .auth-footer a {
-            color: var(--emerald-deep);
-            font-weight: 600;
-            text-decoration: none;
-            transition: color 0.2s ease;
-        }
-        .auth-footer a:hover {
-            color: var(--ink);
-            text-decoration: underline;
-        }
-    </style>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" th:href="@{/css/auth.css}">
 </head>
 <body>
     <div class="auth-wrapper">
         <aside class="auth-showcase">
-            <a class="showcase-brand" href="/"><span class="showcase-logo"><i class="bi bi-wallet2"></i></span> AKHHA PAY</a>
+            <a class="showcase-brand" th:href="@{/}">
+                <span class="showcase-logo"><i class="bi bi-wallet2"></i></span>
+                <span>AKHHA PAY</span>
+            </a>
             <div class="showcase-copy">
                 <span class="showcase-tag"><i class="bi bi-stars"></i> YOUR EVERYDAY WALLET</span>
                 <h1>Money moves better when everything feels simple.</h1>
-                <p>Check your balance, send money, and keep track of your activity in one calm, secure space.</p>
+                <p>Check your balance, send money instantly, link your bank accounts, and track your financial journey in one calm, secure space.</p>
                 <ul class="showcase-points">
-                    <li><i class="bi bi-eye-slash"></i> Private balance view</li>
-                    <li><i class="bi bi-shield-lock"></i> Email-verified wallet security</li>
-                    <li><i class="bi bi-receipt"></i> Clear transaction history</li>
+                    <li><i class="bi bi-eye-slash-fill"></i> Private balance &amp; transaction privacy</li>
+                    <li><i class="bi bi-shield-lock-fill"></i> Real-time 2FA Email OTP authorization</li>
+                    <li><i class="bi bi-receipt"></i> Detailed transaction logs &amp; PDF receipts</li>
                 </ul>
             </div>
             <div class="showcase-footnote">Akhha Pay · Simple by design</div>
         </aside>
+
         <div class="card-auth">
-            
-            <h2 class="title">Welcome back</h2>
-            <p class="subtitle">Sign in to pick up where you left off.</p>
-            
+            <h2 class="title">Welcome Back</h2>
+            <p class="subtitle">Sign in to manage your wallet and transactions.</p>
+
             <!-- Dynamic Alerts -->
-            <div th:if="${error}" class="alert-custom alert-error" th:text="${error}"></div>
-            <div th:if="${param.registered}" class="alert-custom alert-success-custom">Registration complete! Log in to get started.</div>
-            <div th:if="${param.passwordReset}" class="alert-custom alert-success-custom">Your password has been reset. Sign in with your new password.</div>
-            
+            <div th:if="${error}" class="alert-custom alert-error">
+                <i class="bi bi-exclamation-circle-fill flex-shrink-0"></i>
+                <span th:text="${error}"></span>
+            </div>
+            <div th:if="${param.registered}" class="alert-custom alert-success-custom">
+                <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                <span>Registration complete! Sign in to get started.</span>
+            </div>
+            <div th:if="${param.passwordReset}" class="alert-custom alert-success-custom">
+                <i class="bi bi-check-circle-fill flex-shrink-0"></i>
+                <span>Password reset successful. Sign in with your new password.</span>
+            </div>
+
             <form th:action="@{/login}" method="post">
                 <div class="field-group">
                     <label class="field-label">Email Address</label>
-                    <input type="email" name="email" class="custom-input" required placeholder="name@domain.com">
+                    <input type="email" name="email" class="custom-input" required placeholder="name@example.com" autocomplete="email">
                 </div>
-                
+
                 <div class="field-group">
-                    <label class="field-label">Security Password</label>
-                    <input type="password" name="password" class="custom-input" required placeholder="••••••••">
-                    <div class="text-end mt-2"><a class="small text-decoration-none fw-semibold" style="color:var(--emerald-deep)" th:href="@{/forgot-password}">Forgot password?</a></div>
+                    <div class="d-flex justify-content-between align-items-center mb-1">
+                        <label class="field-label mb-0">Password</label>
+                        <a class="small text-decoration-none fw-bold" style="color: var(--auth-primary); font-size: 0.8rem;" th:href="@{/forgot-password}">Forgot password?</a>
+                    </div>
+                    <div class="position-relative">
+                        <input type="password" name="password" id="loginPassword" class="custom-input pe-5" required placeholder="••••••••" autocomplete="current-password">
+                        <button type="button" class="btn btn-link text-muted position-absolute end-0 top-50 translate-middle-y me-2 text-decoration-none p-1" onclick="togglePass('loginPassword', this)" aria-label="Toggle password visibility">
+                            <i class="bi bi-eye"></i>
+                        </button>
+                    </div>
                 </div>
-                
-                <button type="submit" class="btn-auth">Authorize Credentials</button>
+
+                <button type="submit" class="btn-auth">
+                    <span>Authorize &amp; Continue</span>
+                    <i class="bi bi-arrow-right ms-2"></i>
+                </button>
             </form>
 
             <div class="auth-footer">
-                New account creation? <a href="/register">Sign Up</a>
+                Don't have an account yet? <a th:href="@{/register}">Sign Up Free</a>
             </div>
-            
         </div>
     </div>
+
+    <script>
+        function togglePass(id, btn) {
+            const input = document.getElementById(id);
+            const icon = btn.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('bi-eye', 'bi-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('bi-eye-slash', 'bi-eye');
+            }
+        }
+    </script>
 </body>
 </html>
